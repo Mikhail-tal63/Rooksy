@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -11,8 +12,8 @@ import (
 type Config struct {
 	host string
 	jwtSecret string
-	jwtExp string
-	port int
+	jwtExp int64
+	port string
 }
 
 func Load() *Config{
@@ -24,9 +25,22 @@ func Load() *Config{
     return &Config{
 		host: os.Getenv("HOST"),
 		jwtSecret: os.Getenv("SECRET"),
-		jwtExp: os.Getenv("JWT_EXP"),
+		jwtExp: intEnv("JWT_EXP",(3600*24*7)),
+        port: os.Getenv("PORT"),		
 		
 	}
 
 
+}
+
+func intEnv(env string, fallback int64) int64{
+	if val, ok := os.LookupEnv(env); ok {
+		i ,err := strconv.ParseInt(val,10,14)
+		if err != nil {
+			return fallback
+		}
+		return i
+		
+	}
+	return fallback
 }
