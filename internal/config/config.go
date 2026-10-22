@@ -8,39 +8,38 @@ import (
 	"github.com/joho/godotenv"
 )
 
-
 type Config struct {
-	host string
-	jwtSecret string
-	jwtExp int64
-	port string
+	Host      string
+	DBName    string
+	JwtSecret string
+	JwtExp    int64
+	Port      string
 }
 
-func Load() *Config{
-	 err := godotenv.Load()
+func Load() *Config {
+	err := godotenv.Load()
 	if err != nil {
 		log.Println(".env not found, using system environment variables")
 	}
 
-    return &Config{
-		host: os.Getenv("HOST"),
-		jwtSecret: os.Getenv("SECRET"),
-		jwtExp: intEnv("JWT_EXP",(3600*24*7)),
-        port: os.Getenv("PORT"),		
-		
+	return &Config{
+		Host:      os.Getenv("HOST"),
+		DBName:    os.Getenv("DB_NAME"),
+		JwtSecret: os.Getenv("SECRET"),
+		JwtExp:    intEnv("JWT_EXP", 3600*24*7),
+		Port:      os.Getenv("PORT"),
 	}
-
 
 }
 
-func intEnv(env string, fallback int64) int64{
+func intEnv(env string, fallback int64) int64 {
 	if val, ok := os.LookupEnv(env); ok {
-		i ,err := strconv.ParseInt(val,10,14)
+		i, err := strconv.ParseInt(val, 10, 14)
 		if err != nil {
 			return fallback
 		}
 		return i
-		
+
 	}
 	return fallback
 }

@@ -16,7 +16,7 @@ func ConnectMongoDB(url, name string) (*mongo.Database, error) {
 
 	client, err := mongo.Connect(cxt, clientOptions)
 	if err != nil {
-		log.Println("error with connecting database")
+
 		return nil, err
 	}
 	err = client.Ping(cxt, nil)
