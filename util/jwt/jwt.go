@@ -19,3 +19,16 @@ func CreateJWT(secret []byte, userID any) (string, error) {
 	}
 	return tokenString, nil
 }
+func GenerateRefreshToken(secret []byte, UserID any) (string, error) {
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"sub": UserID,
+	})
+
+	tokenString, err := token.SignedString(secret)
+	if err != nil {
+		return "", err
+	}
+	return tokenString, nil
+
+}
