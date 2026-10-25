@@ -1,13 +1,25 @@
 package auth
 
-import "go.mongodb.org/mongo-driver/mongo"
+import (
+	"context"
+
+	database "github.com/Mikhail-Tal63/Rooksy/database/db"
+)
 
 type AuthRepository struct {
-	db *mongo.Collection
+	query *database.Queries
 }
 
-func (r *AuthRepository) NewAuthRepository(db *mongo.Database) *AuthRepository {
+func (r *AuthRepository) NewAuthRepository(query *database.Queries) *AuthRepository {
 	return &AuthRepository{
-		db: db.Collection("user"),
+		query: query,
 	}
+}
+
+func (r *AuthRepository) CreateUser(ctx context.Context, user database.CreateUserParams) (*database.User, error) {
+	new, err := r.query.CreateUser(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+	return &new, nil
 }

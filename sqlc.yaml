@@ -7,11 +7,11 @@ version: "2"
 sql:
   - engine: "postgresql"
     queries: "./database/db/querys"
-    schema: "./migrations"
+    schema: "./database/migrations"
 
     gen:
       go:
-        package: "db"
+        package: "database"
         out: "./database/db"
         sql_package: "pgx/v5"
 
