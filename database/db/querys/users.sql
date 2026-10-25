@@ -22,3 +22,14 @@ VALUES (
     $7
 )
 RETURNING *;
+
+-- name: GetUserByEmail :one
+SELECT 
+    id ,
+    email   ,
+password_hash 
+
+     
+FROM users 
+WHERE  email = $1
+LIMIT 1;
