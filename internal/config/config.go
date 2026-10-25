@@ -9,8 +9,13 @@ import (
 )
 
 type Config struct {
-	Host      string
-	DBName    string
+	DBHost     string
+	DBPort     string
+	DBUser     string
+	DBPassword string
+	DBName     string
+	DBSSLMode  string
+
 	JwtSecret string
 	JwtExp    int64
 	Port      string
@@ -23,11 +28,15 @@ func Load() *Config {
 	}
 
 	return &Config{
-		Host:      os.Getenv("HOST"),
-		DBName:    os.Getenv("DB_NAME"),
-		JwtSecret: os.Getenv("SECRET"),
-		JwtExp:    intEnv("JWT_EXP", 3600*24*7),
-		Port:      os.Getenv("PORT"),
+		DBHost:     os.Getenv("HOST"),
+		DBName:     os.Getenv("DB_NAME"),
+		DBPort:     os.Getenv("DB_PORT"),
+		DBUser:     os.Getenv("DB_USER"),
+		DBPassword: os.Getenv("DB_PASSWORD"),
+		DBSSLMode:  os.Getenv("DB_SSL_model"),
+		JwtSecret:  os.Getenv("SECRET"),
+		JwtExp:     intEnv("JWT_EXP", 3600*24*7),
+		Port:       os.Getenv("PORT"),
 	}
 
 }
