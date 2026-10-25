@@ -14,11 +14,11 @@ func Connect(cfg *config.Config) *pgxpool.Pool {
 	dns := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		cfg.DBHost,
-		cfg.DBName,
 		cfg.DBPort,
 		cfg.DBUser,
-		cfg.DBSSLMode,
 		cfg.DBPassword,
+		cfg.DBName,
+		cfg.DBSSLMode,
 	)
 	db, err := pgxpool.New(context.Background(), dns)
 	if err != nil {

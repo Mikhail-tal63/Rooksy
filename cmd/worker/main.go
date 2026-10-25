@@ -11,10 +11,8 @@ import (
 func main() {
 	cfg := config.Load()
 
-	db, err := database.ConnectMongoDB(cfg.Host, cfg.DBName)
-	if err != nil {
-		log.Fatalf("failed to connect to MongoDB: %v", err)
-	}
+	db := database.Connect(cfg)
+
 	server := api.NewAPIServer(db, cfg.Port)
 	if err := server.Run(cfg); err != nil {
 		log.Fatal(err)

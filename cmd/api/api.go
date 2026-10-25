@@ -7,15 +7,15 @@ import (
 	"github.com/Mikhail-Tal63/Rooksy/internal/config"
 	"github.com/Mikhail-Tal63/Rooksy/internal/middleware"
 	"github.com/gorilla/mux"
-	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type API struct {
-	DB   *mongo.Database
+	DB   *pgxpool.Pool
 	Port string
 }
 
-func NewAPIServer(DB *mongo.Database, Port string) *API {
+func NewAPIServer(DB *pgxpool.Pool, Port string) *API {
 	return &API{
 		DB:   DB,
 		Port: Port,
