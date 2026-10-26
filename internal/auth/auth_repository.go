@@ -27,3 +27,6 @@ func (r *AuthRepository) CreateUser(ctx context.Context, user database.CreateUse
 func (r *AuthRepository) GetUserByEmail(ctx context.Context, email string) (database.GetUserByEmailRow, error) {
 	return r.query.GetUserByEmail(ctx, email)
 }
+func (r *AuthRepository) GetUserByUsername(ctx context.Context, username string) (database.GetUserByUsernameRow, error) {
+	return r.query.GetUserByUsername(ctx, username)
+}
