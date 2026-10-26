@@ -29,6 +29,21 @@ func (s *AuthService) Register(ctx context.Context, payload RegisterRequist) (*A
 		return nil, err
 	}
 
+	username, err := s.Repository.GetUserByUsername(ctx, payload.Username)
+	if err != nil {
+		return nil, err
+	}
+	if username != nil {
+		return nil, ErrUsernameTaken
+	}
+	email, err := s.Repository.GetUserByEmail(ctx, payload.Email)
+	if err != nil {
+		return nil, err
+	}
+	if email != nil {
+		return nil, ErrEmailAlreadyExists
+	}
+
 	userID := uuid.New()
 	user := &database.CreateUserParams{
 		ID:           userID,
