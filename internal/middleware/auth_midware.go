@@ -8,28 +8,29 @@ import (
 
 	"github.com/Mikhail-Tal63/Rooksy/util/jso"
 	"github.com/Mikhail-Tal63/Rooksy/util/jwt"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"github.com/google/uuid"
 )
 
-type ContextKey string
+type contextKey string
 
-const UserIDKey ContextKey = "userID"
+const UserIDKey contextKey = "userID"
 
-func AuthMiddleWare(secret string) func(http.Handler) http.Handler {
-	sec := []byte(secret)
+func AuthMiddleware(jwtSecret string) func(http.Handler) http.Handler {
+	secret := []byte(jwtSecret)
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			authHader := r.Header.Get("Authorization")
-			if authHader == "" {
+			authHeader := r.Header.Get("Authorization")
+			if authHeader == "" {
 				jso.WriteError(w, http.StatusUnauthorized, fmt.Errorf("missing authorization header"))
 				return
 			}
-			if !strings.HasPrefix(authHader, "Bearer") {
+			if !strings.HasPrefix(authHeader, "Bearer ") {
 				jso.WriteError(w, http.StatusUnauthorized, fmt.Errorf("invalid authorization format"))
 				return
 			}
-			tokenString := strings.TrimPrefix(authHader, "Bearer ")
-			userID, err := jwt.VerifyJWT(sec, tokenString)
+			tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+
+			userID, err := jwt.VerifyJWT(secret, tokenString)
 			if err != nil {
 				jso.WriteError(w, http.StatusUnauthorized, err)
 				return
@@ -40,10 +41,11 @@ func AuthMiddleWare(secret string) func(http.Handler) http.Handler {
 		})
 	}
 }
-func GetUserID(ctx context.Context) (primitive.ObjectID, error) {
-	userID, ok := ctx.Value(UserIDKey).(primitive.ObjectID)
+
+func GetUserID(ctx context.Context) (uuid.UUID, error) {
+	userID, ok := ctx.Value(UserIDKey).(uuid.UUID)
 	if !ok {
-		return primitive.NilObjectID, fmt.Errorf("user id not found in context")
+		return uuid.Nil, fmt.Errorf("user id not found in context")
 	}
 	return userID, nil
 }
