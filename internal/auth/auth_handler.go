@@ -43,3 +43,25 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
+	var payload *LoginRequest
+
+	if err := jso.ParseJSON(r, payload); err != nil {
+		errorhandler.Handle(w, err)
+		return
+	}
+
+	authRes, err := h.Service.Login(r.Context(), *payload)
+	if err != nil {
+		errorhandler.Handle(w, err)
+		return
+	}
+	if err := jso.WriteJSON(w, http.StatusOK, map[string]any{
+		"message":  "welcome back",
+		"responce": authRes,
+	}); err != nil {
+		errorhandler.Handle(w, err)
+		return
+	}
+}
