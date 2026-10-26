@@ -93,7 +93,49 @@ func (s *AuthService) Register(ctx context.Context, payload RegisterRequist) (*A
 	return &AuthResponce{
 		RefreshToken: refreshToken,
 		AccessToken:  accessToken,
-		User:         *newuser,
+		User:         newuser,
+	}, nil
+
+}
+
+func (s *AuthService) Login(ctx context.Context, payload LoginRequest) (*AuthResponce, error) {
+
+	var password string
+	var userID uuid.UUID
+	if err := ValidateEmail(payload.UsernameOrEmail); err != nil {
+		user, err := s.Repository.GetUserByUsername(ctx, payload.UsernameOrEmail)
+		if err != nil {
+			return nil, ErrUserNotFound
+		}
+		userID = user.ID
+		password = user.PasswordHash
+	} else {
+
+		user, err := s.Repository.GetUserByEmail(ctx, payload.UsernameOrEmail)
+		if err != nil {
+			return nil, ErrUserNotFound
+		}
+		userID = user.ID
+		password = user.PasswordHash
+	}
+
+	if !util.ComparePassword(password, []byte(payload.Password)) {
+		return nil, ErrWrongPassword
+	}
+
+	accessToken, err := jwt.CreateJWT(s.secret, userID)
+	if err != nil {
+		return nil, err
+	}
+	refreshToken, err := jwt.GenerateRefreshToken(s.secret, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &AuthResponce{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		User:         nil,
 	}, nil
 
 }
