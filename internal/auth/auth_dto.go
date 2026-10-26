@@ -9,9 +9,13 @@ type RegisterRequist struct {
 	Email     string
 	Password  string
 }
+type LoginRequest struct {
+	UsernameOrEmail string
+	Password        string
+}
 
 type AuthResponce struct {
 	AccessToken  string
 	RefreshToken string
-	User         database.User
+	User         *database.User
 }
