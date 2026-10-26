@@ -22,7 +22,6 @@ VALUES (
     $7
 )
 RETURNING *;
-
 -- name: GetUserByEmail :one
 SELECT 
     id ,
@@ -32,4 +31,24 @@ password_hash
      
 FROM users 
 WHERE  email = $1
+LIMIT 1;
+
+-- name: GetUserByUsername :one
+SELECT 
+    id ,
+
+    first_name ,
+    last_name ,
+    username  ,
+    email   ,
+password_hash ,
+bullet_elo  ,
+blitz_elo ,
+rapid_elo  ,
+image_id,
+is_active   ,
+created_at 
+     
+FROM users 
+WHERE  username = $1
 LIMIT 1;

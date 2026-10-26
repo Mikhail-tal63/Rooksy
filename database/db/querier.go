@@ -11,6 +11,7 @@ import (
 type Querier interface {
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error)
+	GetUserByUsername(ctx context.Context, username string) (GetUserByUsernameRow, error)
 }
 
 var _ Querier = (*Queries)(nil)

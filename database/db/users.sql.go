@@ -102,3 +102,59 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEm
 	err := row.Scan(&i.ID, &i.Email, &i.PasswordHash)
 	return i, err
 }
+
+const getUserByUsername = `-- name: GetUserByUsername :one
+SELECT 
+    id ,
+
+    first_name ,
+    last_name ,
+    username  ,
+    email   ,
+password_hash ,
+bullet_elo  ,
+blitz_elo ,
+rapid_elo  ,
+image_id,
+is_active   ,
+created_at 
+     
+FROM users 
+WHERE  username = $1
+LIMIT 1
+`
+
+type GetUserByUsernameRow struct {
+	ID           uuid.UUID        `json:"id"`
+	FirstName    string           `json:"first_name"`
+	LastName     string           `json:"last_name"`
+	Username     string           `json:"username"`
+	Email        string           `json:"email"`
+	PasswordHash string           `json:"password_hash"`
+	BulletElo    int32            `json:"bullet_elo"`
+	BlitzElo     int32            `json:"blitz_elo"`
+	RapidElo     int32            `json:"rapid_elo"`
+	ImageID      pgtype.UUID      `json:"image_id"`
+	IsActive     bool             `json:"is_active"`
+	CreatedAt    pgtype.Timestamp `json:"created_at"`
+}
+
+func (q *Queries) GetUserByUsername(ctx context.Context, username string) (GetUserByUsernameRow, error) {
+	row := q.db.QueryRow(ctx, getUserByUsername, username)
+	var i GetUserByUsernameRow
+	err := row.Scan(
+		&i.ID,
+		&i.FirstName,
+		&i.LastName,
+		&i.Username,
+		&i.Email,
+		&i.PasswordHash,
+		&i.BulletElo,
+		&i.BlitzElo,
+		&i.RapidElo,
+		&i.ImageID,
+		&i.IsActive,
+		&i.CreatedAt,
+	)
+	return i, err
+}
