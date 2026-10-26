@@ -24,9 +24,17 @@ func (r *AuthRepository) CreateUser(ctx context.Context, user database.CreateUse
 	return &new, nil
 }
 
-func (r *AuthRepository) GetUserByEmail(ctx context.Context, email string) (database.GetUserByEmailRow, error) {
-	return r.query.GetUserByEmail(ctx, email)
+func (r *AuthRepository) GetUserByEmail(ctx context.Context, email string) (*database.GetUserByEmailRow, error) {
+	new, err := r.query.GetUserByEmail(ctx, email)
+	if err != nil {
+		return nil, err
+	}
+	return &new, nil
 }
-func (r *AuthRepository) GetUserByUsername(ctx context.Context, username string) (database.GetUserByUsernameRow, error) {
-	return r.query.GetUserByUsername(ctx, username)
+func (r *AuthRepository) GetUserByUsername(ctx context.Context, username string) (*database.GetUserByUsernameRow, error) {
+	new, err := r.query.GetUserByUsername(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+	return &new, nil
 }
