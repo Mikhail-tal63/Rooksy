@@ -29,28 +29,49 @@ func (s *AuthService) Register(ctx context.Context, payload RegisterRequist) (*A
 		return nil, err
 	}
 
-	username, err := s.Repository.GetUserByUsername(ctx, payload.Username)
+	firstname := NameValidate(payload.FirstName)
+	lastname := NameValidate(payload.LastName)
+	username := UsernameValidate(payload.Username)
+	email := EmailValidate(payload.Email)
+
+	if err = ValidateEmail(email); err != nil {
+		return nil, err
+	}
+	if err = ValidateName(firstname); err != nil {
+		return nil, err
+	}
+	if err = ValidateName(lastname); err != nil {
+		return nil, err
+	}
+	if err = ValidateUsername(username); err != nil {
+		return nil, err
+	}
+	if err = ValidatePassword(payload.Password); err != nil {
+		return nil, err
+	}
+
+	existesUsername, err := s.Repository.GetUserByUsername(ctx, payload.Username)
 	if err != nil {
 		return nil, err
 	}
-	if username != nil {
+	if existesUsername != nil {
 		return nil, ErrUsernameTaken
 	}
-	email, err := s.Repository.GetUserByEmail(ctx, payload.Email)
+	existedEmail, err := s.Repository.GetUserByEmail(ctx, payload.Email)
 	if err != nil {
 		return nil, err
 	}
-	if email != nil {
+	if existedEmail != nil {
 		return nil, ErrEmailAlreadyExists
 	}
 
 	userID := uuid.New()
 	user := &database.CreateUserParams{
 		ID:           userID,
-		FirstName:    payload.FirstName,
-		LastName:     payload.LastName,
-		Username:     payload.Username,
-		Email:        payload.Email,
+		FirstName:    firstname,
+		LastName:     lastname,
+		Username:     username,
+		Email:        email,
 		PasswordHash: hashedpassword,
 		ImageID:      pgtype.UUID{Valid: false},
 	}
