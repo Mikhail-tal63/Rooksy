@@ -2,6 +2,7 @@ package errorhandler
 
 import (
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/Mikhail-Tal63/Rooksy/util/jso"
@@ -27,9 +28,11 @@ func Handle(w http.ResponseWriter, err error) {
 	var app AppError
 	if errors.As(err, &app) {
 		Write(w, app.HTTPStatus(), app.Code(), app.Error())
+
 		return
 	}
 	Write(w, http.StatusInternalServerError, "INTERNAL_SERVER_ERROR", "internal server error")
+	log.Printf("unhandled internal error: %+v", err)
 }
 
 func Write(w http.ResponseWriter, status int, code string, message string) {
