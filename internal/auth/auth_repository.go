@@ -10,7 +10,7 @@ type AuthRepository struct {
 	query *database.Queries
 }
 
-func (r *AuthRepository) NewAuthRepository(query *database.Queries) *AuthRepository {
+func NewAuthRepository(query *database.Queries) *AuthRepository {
 	return &AuthRepository{
 		query: query,
 	}

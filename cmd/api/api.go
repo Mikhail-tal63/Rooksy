@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 
+	database "github.com/Mikhail-Tal63/Rooksy/database/db"
+	"github.com/Mikhail-Tal63/Rooksy/internal/auth"
 	"github.com/Mikhail-Tal63/Rooksy/internal/config"
 	"github.com/Mikhail-Tal63/Rooksy/internal/middleware"
 	"github.com/gorilla/mux"
@@ -29,7 +31,17 @@ func (s *API) Run(cfg *config.Config) error {
 
 	/*protected router*/
 	protacted := apiRouter.PathPrefix("").Subrouter()
-	protacted.Use(middleware.AuthMiddleWare(cfg.JwtSecret))
+	protacted.Use(middleware.AuthMiddleware(cfg.JwtSecret))
+
+	query := database.New(s.DB)
+
+	authRepository := auth.NewAuthRepository(query)
+	authService := auth.NewAuthService(authRepository, []byte(cfg.JwtSecret))
+	authHandler := auth.NewAuthHandler(authService)
+
+	// ── Router ──────────────────────────────────────────────
+	authHandler.Router(apiRouter)
+
 	log.Printf("App is listening on %s", s.Port)
 	addr := ":" + s.Port
 	return http.ListenAndServe(addr, router)
