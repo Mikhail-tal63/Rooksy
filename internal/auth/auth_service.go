@@ -2,11 +2,13 @@ package auth
 
 import (
 	"context"
+	"errors"
 
 	database "github.com/Mikhail-Tal63/Rooksy/database/db"
 	"github.com/Mikhail-Tal63/Rooksy/util"
 	"github.com/Mikhail-Tal63/Rooksy/util/jwt"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -51,17 +53,17 @@ func (s *AuthService) Register(ctx context.Context, payload RegisterRequist) (*A
 	}
 
 	existesUsername, err := s.Repository.GetUserByUsername(ctx, payload.Username)
-	if err != nil {
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		return nil, err
 	}
-	if existesUsername != nil {
+	if err == nil && existesUsername != nil {
 		return nil, ErrUsernameTaken
 	}
 	existedEmail, err := s.Repository.GetUserByEmail(ctx, payload.Email)
-	if err != nil {
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		return nil, err
 	}
-	if existedEmail != nil {
+	if err == nil && existedEmail != nil {
 		return nil, ErrEmailAlreadyExists
 	}
 
