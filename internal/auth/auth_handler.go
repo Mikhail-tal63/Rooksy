@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"log"
 	"net/http"
 
 	errorhandler "github.com/Mikhail-Tal63/Rooksy/util/errorHandler"
@@ -26,7 +27,7 @@ func (h *AuthHandler) Router(mux *mux.Router) {
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	var payload *RegisterRequist
 
-	if err := jso.ParseJSON(r, payload); err != nil {
+	if err := jso.ParseJSON(r, &payload); err != nil {
 		errorhandler.Handle(w, err)
 		return
 	}
@@ -34,6 +35,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	res, err := h.Service.Register(r.Context(), *payload)
 	if err != nil {
 		errorhandler.Handle(w, err)
+		log.Printf("register failed: %v", err)
 		return
 	}
 	if err := jso.WriteJSON(w, http.StatusCreated, map[string]any{
@@ -41,6 +43,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		"responce": res,
 	}); err != nil {
 		errorhandler.Handle(w, err)
+
 		return
 	}
 }
@@ -48,7 +51,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var payload *LoginRequest
 
-	if err := jso.ParseJSON(r, payload); err != nil {
+	if err := jso.ParseJSON(r, &payload); err != nil {
 		errorhandler.Handle(w, err)
 		return
 	}
