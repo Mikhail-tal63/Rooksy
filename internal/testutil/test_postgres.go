@@ -3,11 +3,11 @@ package testutil
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"testing"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
@@ -42,7 +42,7 @@ func NewTestPostgres(t *testing.T) *pgxpool.Pool {
 		}
 	})
 
-	connStr, err := container.ConnectionString(ctx, "sslmode=diable")
+	connStr, err := container.ConnectionString(ctx, "sslmode=disable")
 	if err != nil {
 		t.Fatalf("get connection string: %v", err)
 	}
@@ -53,7 +53,7 @@ func NewTestPostgres(t *testing.T) *pgxpool.Pool {
 	}
 	defer db.Close()
 
-	if err := RunMigrations(db, "/Rooksy/database/migrations"); err != nil {
+	if err := RunMigrations(db, "../../database/migrations"); err != nil {
 		t.Fatalf("run migration : %v", err)
 	}
 
@@ -78,5 +78,5 @@ func RunMigrations(db *sql.DB, dir string) error {
 		return err
 	}
 
-	return fmt.Errorf("migration runner not implemanted:")
+	return goose.Up(db, dir)
 }
