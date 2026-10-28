@@ -9,6 +9,16 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func setupAuthTest(t *testing.T) (*AuthService, *AuthRepository, *database.Queries) {
+	t.Helper()
+
+	pool := testutil.NewTestPostgres(t)
+	queries := database.New(pool)
+	repo := NewAuthRepository(queries)
+	service := NewAuthService(repo, []byte("testing-secret"))
+
+	return service, repo, queries
+}
 func TestRegister(t *testing.T) {
 
 	pool := testutil.NewTestPostgres(t)
@@ -81,4 +91,39 @@ func TestRegisterWithDublcateEmails(t *testing.T) {
 	//verify second username is not created
 	_, err = repo.GetUserByUsername(ctx, user2.Username)
 	require.Error(t, err)
+}
+
+func TestRegisterWithDublcateUsernames(t *testing.T) {
+	ctx := context.Background()
+	service, repo, _ := setupAuthTest(t)
+
+	user1 := RegisterRequist{
+		FirstName: "alzinjy",
+		LastName:  "almultahib",
+		Email:     "b@gmail.com",
+		Username:  "smt",
+		Password:  "12345678",
+	}
+	user2 := RegisterRequist{
+		FirstName: "alzinjy",
+		LastName:  "almultahib",
+		Email:     "bb@gmail.com",
+		Username:  "smt",
+		Password:  "12345678",
+	}
+
+	_, err := service.Register(ctx, user1)
+	require.NoError(t, err)
+	_, err = service.Register(ctx, user2)
+	require.Error(t, err)
+
+	user, err := repo.GetUserByEmail(ctx, user1.Email)
+	require.NoError(t, err)
+	require.Equal(t, user.Email, user1.Email)
+	require.NotNil(t, user)
+
+	//again checking if email didnt create
+	_, err = repo.GetUserByUsername(ctx, user2.Email)
+	require.Error(t, err)
+
 }
