@@ -42,3 +42,43 @@ func TestRegister(t *testing.T) {
 	require.NotEqual(t, payload.Password, user.PasswordHash)
 
 }
+
+func TestRegisterWithDublcateEmails(t *testing.T) {
+	ctx := context.Background()
+
+	pool := testutil.NewTestPostgres(t)
+	queries := database.New(pool)
+	repo := NewAuthRepository(queries)
+	service := NewAuthService(repo, []byte("hella-lowya-and-shi"))
+
+	user1 := RegisterRequist{
+		FirstName: "alzinjy",
+		LastName:  "almultahib",
+		Email:     "b@gmail.com",
+		Username:  "smt",
+		Password:  "12345678",
+	}
+	user2 := RegisterRequist{
+		FirstName: "alzinjy",
+		LastName:  "almultahib",
+		Email:     "b@gmail.com",
+		Username:  "smt2",
+		Password:  "12345678",
+	}
+
+	_, err := service.Register(ctx, user1)
+
+	require.NoError(t, err)
+	_, err = service.Register(ctx, user2)
+	require.Error(t, err)
+
+	user, err := repo.GetUserByUsername(ctx, user1.Username)
+
+	require.NoError(t, err)
+	require.NotNil(t, user)
+	require.Equal(t, user.Email, user1.Email)
+
+	//verify second username is not created
+	_, err = repo.GetUserByUsername(ctx, user2.Username)
+	require.Error(t, err)
+}
