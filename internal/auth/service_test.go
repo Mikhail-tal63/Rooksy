@@ -154,10 +154,31 @@ func TestRegisterWithInvalidInputs(t *testing.T) {
 		Username:  "",
 		Password:  "sdfasdfasfda",
 	}
+	badUserName := RegisterRequist{
+		FirstName: "sdfa",
+		LastName:  "smt",
+		Email:     "s@gmail.com",
+		Username:  "&$%#@$^",
+		Password:  "sdfasdfasfda",
+	}
+	shortUserName := RegisterRequist{
+		FirstName: "sdfa",
+		LastName:  "smt",
+		Email:     "s@gmail.com",
+		Username:  "s",
+		Password:  "sdfasdfasfda",
+	}
 	noEmail := RegisterRequist{
 		FirstName: "dfsafsd",
 		LastName:  "smt",
 		Email:     "",
+		Username:  "sdfa",
+		Password:  "sdfasdfasfda",
+	}
+	badEmail := RegisterRequist{
+		FirstName: "dfsafsd",
+		LastName:  "smt",
+		Email:     "sdfa",
 		Username:  "sdfa",
 		Password:  "sdfasdfasfda",
 	}
@@ -171,6 +192,10 @@ func TestRegisterWithInvalidInputs(t *testing.T) {
 
 	_, err := service.Register(ctx, noEmail)
 	require.Error(t, err)
+
+	_, err = service.Register(ctx, badEmail)
+	require.Error(t, err)
+
 	_, err = service.Register(ctx, noLastName)
 	require.NoError(t, err)
 
@@ -178,6 +203,12 @@ func TestRegisterWithInvalidInputs(t *testing.T) {
 	require.Error(t, err)
 
 	_, err = service.Register(ctx, noUserName)
+	require.Error(t, err)
+
+	_, err = service.Register(ctx, badUserName)
+	require.Error(t, err)
+
+	_, err = service.Register(ctx, shortUserName)
 	require.Error(t, err)
 
 	_, err = service.Register(ctx, noPasswod)
