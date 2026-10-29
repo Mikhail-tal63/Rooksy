@@ -114,8 +114,8 @@ func (s *AuthService) Login(ctx context.Context, payload LoginRequest) (*AuthRes
 		userID = user.ID
 		password = user.PasswordHash
 	} else {
-
-		user, err := s.Repository.GetUserByEmail(ctx, payload.UsernameOrEmail)
+		email := EmailValidate(payload.UsernameOrEmail)
+		user, err := s.Repository.GetUserByEmail(ctx, email)
 		if err != nil {
 			return nil, ErrUserNotFound
 		}

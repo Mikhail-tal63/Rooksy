@@ -240,3 +240,27 @@ func TestLoginWithUsername(t *testing.T) {
 	require.NoError(t, err)
 
 }
+func TestLoginWithEmail(t *testing.T) {
+	ctx := context.Background()
+
+	service, _, _ := setupAuthTest(t)
+	smo := RegisterRequist{
+		FirstName: "fdsfa",
+		LastName:  "smt",
+		Email:     "s@gmail.com",
+		Username:  "sixSeven",
+		Password:  "12345678",
+	}
+	_, err := service.Register(ctx, smo)
+	require.NoError(t, err)
+
+	user := LoginRequest{
+		UsernameOrEmail: "S@gMail.Com",
+		Password:        "12345678",
+	}
+
+	_, err = service.Login(ctx, user)
+
+	require.NoError(t, err)
+
+}
