@@ -39,7 +39,7 @@ func (s *AuthService) Register(ctx context.Context, payload RegisterRequist) (*A
 	if err = ValidateEmail(email); err != nil {
 		return nil, err
 	}
-	if err = ValidateName(firstname); err != nil {
+	if err = ValidateFirstName(firstname); err != nil {
 		return nil, err
 	}
 	if err = ValidateName(lastname); err != nil {

@@ -52,3 +52,11 @@ func ValidateName(name string) error {
 	}
 	return nil
 }
+func ValidateFirstName(name string) error {
+	if len(strings.TrimSpace(name)) > 100 {
+		return fmt.Errorf("name is too long")
+	} else if len(strings.TrimSpace(name)) < 1 {
+		return fmt.Errorf("invalid first name")
+	}
+	return nil
+}

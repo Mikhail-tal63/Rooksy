@@ -127,3 +127,60 @@ func TestRegisterWithDublcateUsernames(t *testing.T) {
 	require.Error(t, err)
 
 }
+
+func TestRegisterWithInvalidInputs(t *testing.T) {
+	ctx := context.Background()
+
+	service, _, _ := setupAuthTest(t)
+
+	noName := RegisterRequist{
+		FirstName: "",
+		LastName:  "smt",
+		Email:     "s@gmail.com",
+		Username:  "sdfa",
+		Password:  "sdfasdfasfda",
+	}
+	noLastName := RegisterRequist{
+		FirstName: "sdf",
+		LastName:  "",
+		Email:     "s@gmail.com",
+		Username:  "sdfa",
+		Password:  "sdfasdfasfda",
+	}
+	noUserName := RegisterRequist{
+		FirstName: "sdfa",
+		LastName:  "smt",
+		Email:     "s@gmail.com",
+		Username:  "",
+		Password:  "sdfasdfasfda",
+	}
+	noEmail := RegisterRequist{
+		FirstName: "dfsafsd",
+		LastName:  "smt",
+		Email:     "",
+		Username:  "sdfa",
+		Password:  "sdfasdfasfda",
+	}
+	noPasswod := RegisterRequist{
+		FirstName: "fdsfa",
+		LastName:  "smt",
+		Email:     "s@gmail.com",
+		Username:  "sdfa",
+		Password:  "",
+	}
+
+	_, err := service.Register(ctx, noEmail)
+	require.Error(t, err)
+	_, err = service.Register(ctx, noLastName)
+	require.NoError(t, err)
+
+	_, err = service.Register(ctx, noName)
+	require.Error(t, err)
+
+	_, err = service.Register(ctx, noUserName)
+	require.Error(t, err)
+
+	_, err = service.Register(ctx, noPasswod)
+	require.Error(t, err)
+
+}
