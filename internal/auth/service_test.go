@@ -215,3 +215,28 @@ func TestRegisterWithInvalidInputs(t *testing.T) {
 	require.Error(t, err)
 
 }
+
+func TestLoginWithUsername(t *testing.T) {
+	ctx := context.Background()
+
+	service, _, _ := setupAuthTest(t)
+	smo := RegisterRequist{
+		FirstName: "fdsfa",
+		LastName:  "smt",
+		Email:     "s@gmail.com",
+		Username:  "sixSeven",
+		Password:  "12345678",
+	}
+	_, err := service.Register(ctx, smo)
+	require.NoError(t, err)
+
+	user := LoginRequest{
+		UsernameOrEmail: "sixSeven",
+		Password:        "12345678",
+	}
+
+	_, err = service.Login(ctx, user)
+
+	require.NoError(t, err)
+
+}
