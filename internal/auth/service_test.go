@@ -288,3 +288,24 @@ func TestLoginWithWrongPassword(t *testing.T) {
 	_, err = service.Login(ctx, user)
 	require.Error(t, err)
 }
+func TestLoginWithNonExistentUser(t *testing.T) {
+
+	service, _, _ := setupAuthTest(t)
+
+	ctx := context.Background()
+	user := LoginRequest{
+		UsernameOrEmail: "S@gMail.Com",
+		Password:        "12345679",
+	}
+
+	_, err := service.Login(ctx, user)
+	require.Error(t, err)
+
+	user2 := LoginRequest{
+		UsernameOrEmail: "secsaben",
+		Password:        "12345679",
+	}
+
+	_, err = service.Login(ctx, user2)
+	require.Error(t, err)
+}
