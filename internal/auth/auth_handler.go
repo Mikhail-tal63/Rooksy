@@ -7,6 +7,7 @@ import (
 	"github.com/Mikhail-Tal63/Rooksy/internal/middleware"
 	errorhandler "github.com/Mikhail-Tal63/Rooksy/util/errorHandler"
 	"github.com/Mikhail-Tal63/Rooksy/util/jso"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
@@ -23,7 +24,7 @@ func NewAuthHandler(service *AuthService) *AuthHandler {
 func (h *AuthHandler) Router(mux *mux.Router) {
 	mux.HandleFunc("/register", h.Register).Methods("POST")
 	mux.HandleFunc("/login", h.Login).Methods("POST")
-	mux.HandleFunc("/me", h.GetUserData).Methods("GET")
+	mux.HandleFunc("/me", h.GetME).Methods("GET")
 	mux.HandleFunc("/{id}", h.GetUserData).Methods("GET")
 }
 
@@ -73,8 +74,27 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *AuthHandler) GetUserData(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) GetME(w http.ResponseWriter, r *http.Request) {
 	userid, err := middleware.GetUserID(r.Context())
+	if err != nil {
+		errorhandler.Handle(w, err)
+		return
+	}
+	user, err := h.Service.GetUserData(r.Context(), userid)
+	if err != nil {
+		errorhandler.Handle(w, err)
+		return
+	}
+	jso.WriteJSON(w, http.StatusOK, map[string]any{
+		"message": "data sent succsessfully",
+		"data":    user,
+	})
+}
+func (h *AuthHandler) GetUserData(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	id := vars["id"]
+	userid, err := uuid.Parse(id)
 	if err != nil {
 		errorhandler.Handle(w, err)
 		return
