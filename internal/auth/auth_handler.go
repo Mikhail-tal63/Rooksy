@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/Mikhail-Tal63/Rooksy/internal/middleware"
 	errorhandler "github.com/Mikhail-Tal63/Rooksy/util/errorHandler"
 	"github.com/Mikhail-Tal63/Rooksy/util/jso"
 	"github.com/gorilla/mux"
@@ -68,4 +69,21 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		errorhandler.Handle(w, err)
 		return
 	}
+}
+
+func (h *AuthHandler) GetUserData(w http.ResponseWriter, r *http.Request) {
+	userid, err := middleware.GetUserID(r.Context())
+	if err != nil {
+		errorhandler.Handle(w, err)
+		return
+	}
+	user, err := h.Service.GetUserData(r.Context(), userid)
+	if err != nil {
+		errorhandler.Handle(w, err)
+		return
+	}
+	jso.WriteJSON(w, http.StatusOK, map[string]any{
+		"message": "data sent succsessfully",
+		"data":    user,
+	})
 }
