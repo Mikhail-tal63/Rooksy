@@ -23,6 +23,8 @@ func NewAuthHandler(service *AuthService) *AuthHandler {
 func (h *AuthHandler) Router(mux *mux.Router) {
 	mux.HandleFunc("/register", h.Register).Methods("POST")
 	mux.HandleFunc("/login", h.Login).Methods("POST")
+	mux.HandleFunc("/me", h.GetUserData).Methods("GET")
+	mux.HandleFunc("/{id}", h.GetUserData).Methods("GET")
 }
 
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
