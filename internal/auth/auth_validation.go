@@ -2,6 +2,7 @@ package auth
 
 import (
 	"fmt"
+
 	"net/mail"
 	"regexp"
 	"strings"
