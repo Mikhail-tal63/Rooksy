@@ -143,3 +143,14 @@ func (s *AuthService) Login(ctx context.Context, payload LoginRequest) (*AuthRes
 	}, nil
 
 }
+
+func (s *AuthService) GetUserData(ctx context.Context, id uuid.UUID) (*database.GetUserByIDRow, error) {
+	user, err := s.Repository.GetUserByID(ctx, id)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, ErrUserNotFound
+		}
+		return nil, err
+	}
+	return user, nil
+}
