@@ -52,3 +52,23 @@ created_at
 FROM users 
 WHERE  username = $1
 LIMIT 1;
+
+-- name: GetUserByID :one
+SELECT 
+    id ,
+
+    first_name ,
+    last_name ,
+    username  ,
+    email   ,
+password_hash ,
+bullet_elo  ,
+blitz_elo ,
+rapid_elo  ,
+image_id,
+is_active   ,
+created_at 
+     
+FROM users 
+WHERE  id = $1
+LIMIT 1;

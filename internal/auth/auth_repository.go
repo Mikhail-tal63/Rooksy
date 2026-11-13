@@ -4,6 +4,7 @@ import (
 	"context"
 
 	database "github.com/Mikhail-Tal63/Rooksy/database/db"
+	"github.com/google/uuid"
 )
 
 type AuthRepository struct {
@@ -37,4 +38,12 @@ func (r *AuthRepository) GetUserByUsername(ctx context.Context, username string)
 		return nil, err
 	}
 	return &new, nil
+}
+
+func (r *AuthRepository) GetUserByID(ctx context.Context, id uuid.UUID) (*database.GetUserByIDRow, error) {
+	user, err := r.query.GetUserByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return &user, err
 }
