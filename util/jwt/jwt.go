@@ -6,13 +6,13 @@ import (
 
 	"github.com/Mikhail-Tal63/Rooksy/internal/config"
 	"github.com/golang-jwt/jwt/v5"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"github.com/google/uuid"
 )
 
-func CreateJWT(secret []byte, userID any) (string, error) {
+func CreateJWT(secret []byte, userID uuid.UUID) (string, error) {
 	exp := time.Second * time.Duration(config.Load().JwtExp)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": userID,
+		"sub": userID.String(),
 		"exp": time.Now().Add(exp).Unix(),
 	})
 	tokenString, err := token.SignedString(secret)
@@ -34,7 +34,7 @@ func GenerateRefreshToken(secret []byte, UserID any) (string, error) {
 	return tokenString, nil
 
 }
-func VerifyJWT(secret []byte, tokenString string) (primitive.ObjectID, error) {
+func VerifyJWT(secret []byte, tokenString string) (uuid.UUID, error) {
 
 	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -44,26 +44,25 @@ func VerifyJWT(secret []byte, tokenString string) (primitive.ObjectID, error) {
 	})
 
 	if err != nil {
-		return primitive.NilObjectID, err
+		return uuid.Nil, err
 	}
 
 	if !token.Valid {
-		return primitive.NilObjectID, fmt.Errorf("invalid token")
+		return uuid.Nil, fmt.Errorf("invalid token")
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return primitive.NilObjectID, fmt.Errorf("invalid token claims")
+		return uuid.Nil, fmt.Errorf("invalid token claims")
 	}
 
 	sub, ok := claims["sub"].(string)
 	if !ok {
-		return primitive.NilObjectID, fmt.Errorf("invalid token sub")
+		return uuid.Nil, fmt.Errorf("invalid token sub")
 	}
-
-	userID, err := primitive.ObjectIDFromHex(sub)
+	userID, err := uuid.Parse(sub)
 	if err != nil {
-		return primitive.NilObjectID, err
+		return uuid.Nil, err
 	}
 
 	return userID, nil

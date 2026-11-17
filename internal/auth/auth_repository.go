@@ -1,13 +1,49 @@
 package auth
 
-import "go.mongodb.org/mongo-driver/mongo"
+import (
+	"context"
+
+	database "github.com/Mikhail-Tal63/Rooksy/database/db"
+	"github.com/google/uuid"
+)
 
 type AuthRepository struct {
-	db *mongo.Collection
+	query *database.Queries
 }
 
-func (r *AuthRepository) NewAuthRepository(db *mongo.Database) *AuthRepository {
+func NewAuthRepository(query *database.Queries) *AuthRepository {
 	return &AuthRepository{
-		db: db.Collection("user"),
+		query: query,
 	}
+}
+
+func (r *AuthRepository) CreateUser(ctx context.Context, user database.CreateUserParams) (*database.User, error) {
+	new, err := r.query.CreateUser(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+	return &new, nil
+}
+
+func (r *AuthRepository) GetUserByEmail(ctx context.Context, email string) (*database.GetUserByEmailRow, error) {
+	new, err := r.query.GetUserByEmail(ctx, email)
+	if err != nil {
+		return nil, err
+	}
+	return &new, nil
+}
+func (r *AuthRepository) GetUserByUsername(ctx context.Context, username string) (*database.GetUserByUsernameRow, error) {
+	new, err := r.query.GetUserByUsername(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+	return &new, nil
+}
+
+func (r *AuthRepository) GetUserByID(ctx context.Context, id uuid.UUID) (*database.GetUserByIDRow, error) {
+	user, err := r.query.GetUserByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return &user, err
 }
