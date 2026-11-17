@@ -21,11 +21,11 @@ func NewAuthHandler(service *AuthService) *AuthHandler {
 	}
 }
 
-func (h *AuthHandler) Router(mux *mux.Router) {
+func (h *AuthHandler) Router(mux *mux.Router, protected *mux.Router) {
 	mux.HandleFunc("/register", h.Register).Methods("POST")
 	mux.HandleFunc("/login", h.Login).Methods("POST")
-	mux.HandleFunc("/me", h.GetME).Methods("GET")
-	mux.HandleFunc("/{id}", h.GetUserData).Methods("GET")
+	protected.HandleFunc("/me", h.GetME).Methods("GET")
+	mux.HandleFunc("/{id:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}", h.GetUserData).Methods("GET")
 }
 
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
@@ -96,7 +96,7 @@ func (h *AuthHandler) GetUserData(w http.ResponseWriter, r *http.Request) {
 	id := vars["id"]
 	userid, err := uuid.Parse(id)
 	if err != nil {
-		errorhandler.Handle(w, err)
+		errorhandler.Handle(w, ErrInvalidUserID)
 		return
 	}
 	user, err := h.Service.GetUserData(r.Context(), userid)

@@ -87,7 +87,7 @@ func (s *AuthService) Register(ctx context.Context, payload RegisterRequist) (*A
 	if err != nil {
 		return nil, err
 	}
-	newuser, err := s.Repository.CreateUser(ctx, *user)
+	_, err = s.Repository.CreateUser(ctx, *user)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +95,7 @@ func (s *AuthService) Register(ctx context.Context, payload RegisterRequist) (*A
 	return &AuthResponce{
 		RefreshToken: refreshToken,
 		AccessToken:  accessToken,
-		User:         newuser,
+		User:         nil,
 	}, nil
 
 }

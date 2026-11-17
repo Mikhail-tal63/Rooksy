@@ -21,4 +21,5 @@ var (
 	ErrInvalidToken       error = &AuthErrors{"invalid token", http.StatusUnauthorized, "INVALID_TOKEN"}
 	ErrTokenExpired       error = &AuthErrors{"token expired", http.StatusUnauthorized, "TOKEN_EXPIRED"}
 	ErrWrongPassword      error = &AuthErrors{"wrong email or password", http.StatusUnauthorized, "WRONG_PASSWORD"}
+	ErrInvalidUserID      error = &AuthErrors{"invalid user id", http.StatusBadRequest, "INVALID_USER_ID"}
 )

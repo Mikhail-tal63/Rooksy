@@ -45,7 +45,7 @@ func AuthMiddleware(jwtSecret string) func(http.Handler) http.Handler {
 func GetUserID(ctx context.Context) (uuid.UUID, error) {
 	userID, ok := ctx.Value(UserIDKey).(uuid.UUID)
 	if !ok {
-		return uuid.Nil, fmt.Errorf("user id not found in context")
+		return uuid.Nil, fmt.Errorf("user id not found in context : auth_midware")
 	}
 	return userID, nil
 }

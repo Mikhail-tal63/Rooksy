@@ -40,7 +40,7 @@ func (s *API) Run(cfg *config.Config) error {
 	authHandler := auth.NewAuthHandler(authService)
 
 	// ── Router ──────────────────────────────────────────────
-	authHandler.Router(apiRouter)
+	authHandler.Router(apiRouter, protacted)
 
 	log.Printf("App is listening on %s", s.Port)
 	addr := ":" + s.Port
