@@ -45,3 +45,13 @@ type RookMoves struct {
 	File int
 	Rank int
 }
+
+type Position struct {
+	File int
+	Rank int
+}
+
+type Move struct {
+	From Position
+	To   Position
+}
