@@ -96,7 +96,7 @@ func ParseFEN(fen string) (*Fen, error) {
 	}
 	fifty_move, err := strconv.Atoi(ffty_string)
 	if err != nil {
-		return nil, err
+		return nil, ErrInvalidHalfmoveClock
 	}
 
 	//      filling moves count feild
@@ -114,7 +114,7 @@ func ParseFEN(fen string) (*Fen, error) {
 	}
 	moves_count, err := strconv.Atoi(moves_count_string)
 	if err != nil {
-		return nil, err
+		return nil, ErrInvalidFullmoveNumber
 	}
 
 	finally_fen := &Fen{
@@ -206,4 +206,65 @@ func ParseCastling(s string) (CastlingRights, error) {
 		BlackQueenSide: bq,
 	}
 	return castle, nil
+}
+
+func CreateFEN(fen *Fen) (string, error) {
+	board := fen.Board
+	fen_string := ""
+	for i := 0; i < 8; i++ {
+		var Blank_count int = 0
+		for j := 0; j < 8; j++ {
+			if board[i][j].Type == 0 {
+				Blank_count++
+			} else {
+				if Blank_count > 0 {
+					fen_string += string(Blank_count)
+				}
+
+			}
+		}
+	}
+}
+
+func CheckPieceType(piece Piece) (string, error) {
+	var color Colors = piece.Color
+	var piece_string string
+	if color == White {
+		switch piece.Type {
+		case Pawn:
+			piece_string = "P"
+		case Rook:
+			piece_string = "R"
+		case Knight:
+			piece_string = "N"
+		case Bishop:
+			piece_string = "B"
+		case King:
+			piece_string = "K"
+		case Queen:
+			piece_string = "Q"
+		default:
+			return "", ErrInvalidPiece
+		}
+	} else if color == Black {
+		switch piece.Type {
+		case Pawn:
+			piece_string = "p"
+		case Rook:
+			piece_string = "r"
+		case Knight:
+			piece_string = "n"
+		case Bishop:
+			piece_string = "b"
+		case King:
+			piece_string = "k"
+		case Queen:
+			piece_string = "q"
+		default:
+			return "", ErrInvalidPiece
+		}
+	} else {
+		return "", ErrInvalidPieceColor
+	}
+	return piece_string, nil
 }
