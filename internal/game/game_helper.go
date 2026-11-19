@@ -211,6 +211,7 @@ func ParseCastling(s string) (CastlingRights, error) {
 func CreateFEN(fen *Fen) (string, error) {
 	board := fen.Board
 	fen_string := ""
+	//      Board
 	for i := 0; i < 8; i++ {
 		var Blank_count int = 0
 		for j := 0; j < 8; j++ {
@@ -218,12 +219,69 @@ func CreateFEN(fen *Fen) (string, error) {
 				Blank_count++
 			} else {
 				if Blank_count > 0 {
-					fen_string += string(Blank_count)
+					fen_string += strconv.Itoa(Blank_count)
+					Blank_count = 0
 				}
-
+				piece_str, err := CheckPieceType(board[i][j])
+				if err != nil {
+					return "", ErrInvalidFENBoard
+				}
+				fen_string += piece_str
 			}
 		}
+		if Blank_count > 0 {
+			fen_string += strconv.Itoa(Blank_count)
+		}
+		if i != 7 {
+			fen_string += "/"
+		}
 	}
+
+	//   ActiveColor                       ************************
+
+	if fen.ActiveColor == Black {
+		fen_string += " b "
+	} else if fen.ActiveColor == White {
+		fen_string += " w "
+	} else {
+		return "", ErrInvalidActiveColor
+	}
+
+	//  Castling *******************
+
+	if fen.Castling.WhiteKingSide {
+		fen_string += "K"
+	}
+	if fen.Castling.WhiteQueenSide {
+		fen_string += "Q"
+	}
+	if fen.Castling.BlackKingSide {
+		fen_string += "k"
+	}
+	if fen.Castling.BlackQueenSide {
+		fen_string += "q"
+	}
+	if fen_string[len(fen_string)-1] == ' ' {
+		fen_string += "-"
+	}
+
+	// EnPassant
+
+	if fen.EnPassant == "" {
+		fen_string += " -"
+	} else {
+		fen_string += " " + fen.EnPassant
+	}
+
+	//FiftyMove
+
+	fen_string += " " + strconv.Itoa(fen.FiftyMove)
+
+	//move count
+
+	fen_string += " " + strconv.Itoa(fen.FullmoveCount)
+
+	return fen_string, nil
 }
 
 func CheckPieceType(piece Piece) (string, error) {
