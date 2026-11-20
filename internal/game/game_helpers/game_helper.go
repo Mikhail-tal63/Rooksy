@@ -331,3 +331,19 @@ func CheckPieceType(piece Piece) (string, error) {
 	}
 	return piece_string, nil
 }
+
+func GetKingPosition(fen Fen, color Colors) (*Position, error) {
+	board := fen.Board
+	for i := 0; i < 8; i++ {
+		for j := 0; j < 8; j++ {
+			if board[i][j].Type == King && board[i][j].Color == color {
+				pos := &Position{
+					File: i,
+					Rank: j,
+				}
+				return pos, nil
+			}
+		}
+	}
+	return nil, fmt.Errorf("King is not found")
+}
