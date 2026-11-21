@@ -12,12 +12,12 @@ func ParseFEN(fen string) (*Fen, error) {
 
 	//    filling Board feild   *******************************
 
-	var count, inner_c, after_break_counter int = 7, 0, 0
+	var count, inner_c, after_break_counter int = 7, 7, 0
 	var board [8][8]Piece
 	for _, ch := range fen {
 		after_break_counter++
 		if ch == '/' {
-			inner_c = 0
+			inner_c = 7
 			count--
 
 			continue
@@ -35,19 +35,19 @@ func ParseFEN(fen string) (*Fen, error) {
 				Color: 0,
 			}
 
-			if inner_c+blank > 8 {
+			if inner_c-blank+1 < 0 {
 				return nil, fmt.Errorf("invalid FEN: rank exceeds 8 squares")
 			}
 
-			for j := inner_c; j < inner_c+blank; j++ {
+			for j := inner_c; j > inner_c-blank; j-- {
 				board[count][j] = *peice
 			}
 
-			inner_c += blank
+			inner_c -= blank
 		} else {
 
 			board[count][inner_c] = *peice
-			inner_c++
+			inner_c--
 
 		}
 	}
@@ -332,7 +332,7 @@ func CheckPieceType(piece Piece) (string, error) {
 	return piece_string, nil
 }
 
-func GetKingPosition(fen Fen, color Colors) (*Position, error) {
+func GetKingPosition(fen *Fen, color Colors) (*Position, error) {
 	board := fen.Board
 	for i := 0; i < 8; i++ {
 		for j := 0; j < 8; j++ {
