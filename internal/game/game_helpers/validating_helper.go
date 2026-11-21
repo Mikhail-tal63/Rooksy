@@ -257,3 +257,77 @@ func P_CheckRank(board [8][8]Piece, from Position, color Colors, king Position, 
 
 	return true, nil
 }
+func P_CheckFile(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
+
+	if from.File > king.File {
+
+		pass := false
+		for i := king.File + 1; i < from.File; i++ {
+
+			fmt.Println(board[i][king.Rank], i, king.File, from.File)
+			if board[i][king.Rank].Type != Empty {
+				pass = true
+
+				break
+			}
+		}
+		if !pass {
+			for i := from.File + 1; i < 8; i++ {
+
+				if board[i][king.Rank].Type != Empty {
+					fmt.Print(board[i][king.Rank])
+					if board[i][king.Rank].Type == Queen && board[i][king.Rank].Color != color {
+						if king.Rank == to.Rank {
+							return true, nil
+						}
+						fmt.Print(board[i][king.Rank])
+						return false, nil
+					}
+					if board[i][king.Rank].Type == Rook && board[i][king.Rank].Color != color {
+						if king.Rank == to.Rank {
+							return true, nil
+						}
+						fmt.Print(board[i][king.Rank])
+						return false, nil
+					}
+					break
+				}
+			}
+		}
+
+	} else {
+		pass := false
+		for i := king.File - 1; i > from.File; i-- {
+
+			fmt.Println(board[i][king.Rank], i, king.File, from.File)
+			if board[i][king.Rank].Type != Empty {
+				pass = true
+				fmt.Println(board[i][king.Rank])
+				break
+			}
+		}
+		if !pass {
+			for i := from.File - 1; i >= 0; i-- {
+
+				if board[i][king.Rank].Type != Empty {
+					fmt.Print(board[i][king.Rank])
+					if board[i][king.Rank].Type == Queen && board[i][king.Rank].Color != color {
+						if king.Rank == to.Rank {
+							return true, nil
+						}
+						return false, nil
+					}
+					if board[i][king.Rank].Type == Rook && board[i][king.Rank].Color != color {
+						if king.Rank == to.Rank {
+							return true, nil
+						}
+						return false, nil
+					}
+					break
+				}
+			}
+		}
+	}
+
+	return true, nil
+}
