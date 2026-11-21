@@ -87,6 +87,18 @@ func ValidateVirHorzPeices(move Move, fen Fen) (bool, error) {
 
 }
 func CheckPinedPeice(fen *Fen, move Move) (bool, error) {
+
+	hv, err := CheckPinedPeiceHorVir(fen, move)
+	if err != nil {
+		return false, err
+	}
+	if !hv {
+		return false, nil
+	}
+	return true, nil
+}
+
+func CheckPinedPeiceHorVir(fen *Fen, move Move) (bool, error) {
 	from := move.From
 	to := move.To
 	board := fen.Board
@@ -95,94 +107,29 @@ func CheckPinedPeice(fen *Fen, move Move) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("could not find king : validate_helper")
 	}
+
 	if from.File == king.File {
-		r := king.File
-		l := king.File
-		pass := false
-		if from.File > king.File {
-			for i := king.File + 1; i < from.File; i++ {
-				if board[i][king.Rank].Type != Empty {
-					pass = true
-					break
-				}
-			}
-			if !pass {
-				for i := from.File + 1; i < 8; i++ {
-					if board[i][king.Rank].Type != Empty {
-						if board[i][king.Rank].Type == Queen && board[i][king.Rank].Color != color {
-							return false, nil
-						}
-						if board[i][king.Rank].Type == Rook && board[i][king.Rank].Color != color {
-							return false, nil
-						}
-						break
-					}
-				}
-			}
+
+		ra, err := P_CheckRank(board, from, color, *king, to)
+		if err != nil {
+			return false, err
+		}
+		if !ra {
+			return false, nil
 		}
 	}
-
-}
-
-func CheckPinedPeiceHorVir(fen *Fen, move Move) (bool, error) {
-	from := move.From
-
-	board := fen.Board
-	color := fen.Board[from.File][from.Rank].Color
-	king, err := GetKingPosition(fen, color)
-	if err != nil {
-		return false, fmt.Errorf("could not find king : validate_helper")
-	}
-	if from.File == king.File {
-
-		pass := false
-		if from.File > king.File {
-			for i := king.File + 1; i < from.File; i++ {
-				if board[i][king.Rank].Type != Empty {
-					pass = true
-					break
-				}
-			}
-			if !pass {
-				for i := from.File + 1; i < 8; i++ {
-					if board[i][king.Rank].Type != Empty {
-						if board[i][king.Rank].Type == Queen && board[i][king.Rank].Color != color {
-							return false, nil
-						}
-						if board[i][king.Rank].Type == Rook && board[i][king.Rank].Color != color {
-							return false, nil
-						}
-						break
-					}
-				}
-			}
-		} else {
-			pass = false
-			for i := king.File - 1; i > from.File; i-- {
-				if board[i][king.Rank].Type != Empty {
-					pass = true
-					break
-				}
-			}
-			if !pass {
-				for i := from.File - 1; i >= 0; i-- {
-					if board[i][king.Rank].Type != Empty {
-						if board[i][king.Rank].Type == Queen && board[i][king.Rank].Color != color {
-							return false, nil
-						}
-						if board[i][king.Rank].Type == Rook && board[i][king.Rank].Color != color {
-							return false, nil
-						}
-						break
-					}
-				}
-			}
+	if from.Rank == king.Rank {
+		fi, err := P_CheckFile(board, from, color, *king, to)
+		if err != nil {
+			return false, err
+		}
+		if !fi {
+			return false, nil
 		}
 	}
 
 	return true, nil
 }
-
 func P_CheckRank(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
 	if from.File == king.File {
 		if from.Rank > king.Rank {
