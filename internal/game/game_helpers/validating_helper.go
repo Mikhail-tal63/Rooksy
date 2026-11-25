@@ -6,7 +6,11 @@ import (
 	. "github.com/Mikhail-Tal63/Rooksy/internal/game/game_DTO"
 )
 
-// returns move the have been made
+/*
+P_somthing is refrence for pined peice
+*/
+
+// returns the move the have been made
 func CalcolateMoves(firstFEN, secondFEN *Fen) (*Move, error) {
 	var from, to Position
 	for i := 0; i < 8; i++ {
@@ -97,7 +101,6 @@ func CheckPinedPeice(fen *Fen, move Move) (bool, error) {
 	}
 	return true, nil
 }
-
 func CheckPinedPeiceHorVir(fen *Fen, move Move) (bool, error) {
 	from := move.From
 	to := move.To
@@ -276,5 +279,45 @@ func P_CheckFile(board [8][8]Piece, from Position, color Colors, king Position, 
 		}
 	}
 
+	return true, nil
+}
+func P_CheckUpperRightDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
+	l := king.Rank + 1
+	r := king.File + 1
+	fmt.Println(board[r][l], l, r, from.Rank, from.File, "hellorrr")
+	for l < from.Rank && r < from.File {
+
+		if board[r][l].Type != Empty {
+
+			return true, nil
+		}
+		r++
+		l++
+	}
+	l = from.Rank + 1
+	r = from.File + 1
+	for l < 8 && r < 8 {
+		fmt.Println(board[r][l], l, r, king.File, from.File)
+		if board[r][l].Type != Empty {
+
+			if board[r][l].Type == Queen && board[r][l].Color != color {
+				if to.File-to.Rank != from.File-from.Rank {
+					return false, nil
+				}
+				return true, nil
+
+			}
+			if board[r][l].Type == Bishop && board[r][l].Color != color {
+				if to.File-to.Rank != from.File-from.Rank {
+					return false, nil
+				}
+				return true, nil
+
+				//if you suptact from-from and to -to and got same answear you good else bad
+			}
+		}
+		r++
+		l++
+	}
 	return true, nil
 }
