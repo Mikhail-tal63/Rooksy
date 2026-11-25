@@ -447,3 +447,12 @@ func P_CheckLowerLeftDiagnal(board [8][8]Piece, from Position, color Colors, kin
 	}
 	return true, nil
 }
+func P_CheckUpperDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
+	fmt.Println(king.Rank, king.File, from.Rank, from.File)
+	if from.Rank > king.Rank {
+		return P_CheckUpperRightDiagnal(board, from, color, king, to)
+	} else {
+		return P_CheckUpperLeftDiagnal(board, from, color, king, to)
+	}
+
+}
