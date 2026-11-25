@@ -464,3 +464,24 @@ func P_CheckLowerDiagnal(board [8][8]Piece, from Position, color Colors, king Po
 
 	}
 }
+func CheckPinedDiagnly(fen *Fen, move Move) (bool, error) {
+	from := move.From
+	to := move.To
+	board := fen.Board
+	color := fen.Board[from.File][from.Rank].Color
+	king, err := GetKingPosition(fen, color)
+
+	if err != nil {
+		fmt.Print("hi")
+		return false, fmt.Errorf("could not find king : validate_helper")
+	}
+
+	if math.Abs(float64(king.File)-float64(from.File)) == math.Abs(float64(king.Rank)-float64(from.Rank)) {
+		if from.File > king.File {
+			return P_CheckUpperDiagnal(board, from, color, *king, to)
+		} else {
+			return P_CheckLowerDiagnal(board, from, color, *king, to)
+		}
+	}
+	return true, nil
+}
