@@ -92,6 +92,45 @@ func ValidateVirHorzMoves(move Move, fen Fen) (bool, error) {
 	return true, nil
 
 }
+func ValidateBishopMove(move Move, fen Fen) (bool, error) {
+	var from, to Position = move.From, move.To
+	board := fen.Board
+	if from.File < to.File && from.Rank < to.Rank {
+		l := from.File + 1
+		r := from.Rank + 1
+		for l < to.File && r < to.Rank {
+			if board[l][r].Type != Empty {
+				return false, nil
+			}
+		}
+	} else if from.File > to.File && from.Rank > to.Rank {
+		l := from.File - 1
+		r := from.Rank - 1
+		for l > to.File && r > to.Rank {
+			if board[l][r].Type != Empty {
+				return false, nil
+			}
+		}
+	} else if from.File < to.File && from.Rank > to.Rank {
+		l := from.File + 1
+		r := from.Rank - 1
+		for l < to.File && r > to.Rank {
+			if board[l][r].Type != Empty {
+				return false, nil
+			}
+		}
+	} else if from.File > to.File && from.Rank < to.Rank {
+		l := from.File - 1
+		r := from.Rank + 1
+		for l > to.File && r < to.Rank {
+			if board[l][r].Type != Empty {
+				return false, nil
+			}
+		}
+	}
+	return false, nil
+}
+
 func CheckPinedPeice(fen *Fen, move Move) (bool, error) {
 
 	hv, err := CheckPinedPeiceHorVir(fen, move)
