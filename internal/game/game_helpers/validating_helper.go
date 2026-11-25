@@ -9,10 +9,11 @@ import (
 
 /*
 P_somthing is refrence for pined peice
+P2 P3 refrence to the level of each function
 */
 
 // returns the move the have been made
-func CalcolateMoves(firstFEN, secondFEN *Fen) (*Move, error) {
+func LocateMove(firstFEN, secondFEN *Fen) (*Move, error) {
 	var from, to Position
 	for i := 0; i < 8; i++ {
 		for j := 0; j < 8; j++ {
@@ -40,7 +41,7 @@ func CalcolateMoves(firstFEN, secondFEN *Fen) (*Move, error) {
 }
 
 // checks if piece can go to certin squire
-func ValidateVirHorzPeices(move Move, fen Fen) (bool, error) {
+func ValidateVirHorzMoves(move Move, fen Fen) (bool, error) {
 	var from, to Position = move.From, move.To
 	board := fen.Board
 	if from == to {
@@ -98,6 +99,13 @@ func CheckPinedPeice(fen *Fen, move Move) (bool, error) {
 		return false, err
 	}
 	if !hv {
+		return false, nil
+	}
+	diagnlly, err := CheckPinedDiagnly(fen, move)
+	if err != nil {
+		return false, err
+	}
+	if !diagnlly {
 		return false, nil
 	}
 	return true, nil
