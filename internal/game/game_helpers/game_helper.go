@@ -12,14 +12,15 @@ func ParseFEN(fen string) (*Fen, error) {
 
 	//    filling Board feild   *******************************
 
-	var count, inner_c, after_break_counter int = 7, 7, 0
+	var count, inner_c, after_break_counter int = 7, 0, 0
 	var board [8][8]Piece
+
 	for _, ch := range fen {
 		after_break_counter++
-		if ch == '/' {
-			inner_c = 7
-			count--
 
+		if ch == '/' {
+			inner_c = 0
+			count--
 			continue
 		} else if ch == ' ' {
 			break
@@ -29,26 +30,29 @@ func ParseFEN(fen string) (*Fen, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		if peice == nil {
 			peice = &Piece{
 				Type:  Empty,
 				Color: 0,
 			}
 
-			if inner_c-blank+1 < 0 {
+			if inner_c+blank > 8 {
 				return nil, fmt.Errorf("invalid FEN: rank exceeds 8 squares")
 			}
 
-			for j := inner_c; j > inner_c-blank; j-- {
+			for j := inner_c; j < inner_c+blank; j++ {
 				board[count][j] = *peice
 			}
 
-			inner_c -= blank
+			inner_c += blank
 		} else {
+			if inner_c >= 8 {
+				return nil, fmt.Errorf("invalid FEN: rank exceeds 8 squares")
+			}
 
 			board[count][inner_c] = *peice
-			inner_c--
-
+			inner_c++
 		}
 	}
 
