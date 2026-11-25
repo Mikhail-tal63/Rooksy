@@ -456,3 +456,11 @@ func P_CheckUpperDiagnal(board [8][8]Piece, from Position, color Colors, king Po
 	}
 
 }
+func P_CheckLowerDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
+	if from.Rank > king.Rank {
+		return P_CheckLowerRightDiagnal(board, from, color, king, to)
+	} else {
+		return P_CheckLowerLeftDiagnal(board, from, color, king, to)
+
+	}
+}
