@@ -409,3 +409,41 @@ func P_CheckLowerRightDiagnal(board [8][8]Piece, from Position, color Colors, ki
 	}
 	return true, nil
 }
+func P_CheckLowerLeftDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
+	l := king.Rank - 1
+	r := king.File - 1
+	for l > from.Rank && r > from.File {
+
+		if board[r][l].Type != Empty {
+
+			return true, nil
+		}
+		r--
+		l--
+	}
+	l = from.Rank - 1
+	r = from.File - 1
+	for l >= 0 && r >= 0 {
+
+		if board[r][l].Type != Empty {
+
+			if board[r][l].Type == Queen && board[r][l].Color != color {
+				if to.File-to.Rank != from.File-from.Rank {
+					return false, nil
+				}
+				return true, nil
+
+			}
+			if board[r][l].Type == Bishop && board[r][l].Color != color {
+				if to.File-to.Rank != from.File-from.Rank {
+					return false, nil
+				}
+				return true, nil
+				//if you suptact from-from and to -to and got same answear you good else bad
+			}
+		}
+		r--
+		l--
+	}
+	return true, nil
+}
