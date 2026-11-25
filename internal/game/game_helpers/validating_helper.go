@@ -114,7 +114,7 @@ func CheckPinedPeiceHorVir(fen *Fen, move Move) (bool, error) {
 
 	if from.File == king.File {
 
-		ra, err := P_CheckRank(board, from, color, *king, to)
+		ra, err := P2_CheckRank(board, from, color, *king, to)
 		if err != nil {
 			return false, err
 		}
@@ -123,7 +123,7 @@ func CheckPinedPeiceHorVir(fen *Fen, move Move) (bool, error) {
 		}
 	}
 	if from.Rank == king.Rank {
-		fi, err := P_CheckFile(board, from, color, *king, to)
+		fi, err := P2_CheckFile(board, from, color, *king, to)
 		if err != nil {
 			return false, err
 		}
@@ -134,7 +134,31 @@ func CheckPinedPeiceHorVir(fen *Fen, move Move) (bool, error) {
 
 	return true, nil
 }
-func P_CheckRank(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
+func CheckPinedDiagnly(fen *Fen, move Move) (bool, error) {
+	from := move.From
+	to := move.To
+	board := fen.Board
+	color := fen.Board[from.File][from.Rank].Color
+	king, err := GetKingPosition(fen, color)
+
+	if err != nil {
+		fmt.Print("hi")
+		return false, fmt.Errorf("could not find king : validate_helper")
+	}
+
+	if math.Abs(float64(king.File)-float64(from.File)) == math.Abs(float64(king.Rank)-float64(from.Rank)) {
+		if from.File > king.File {
+			return P2_CheckUpperDiagnal(board, from, color, *king, to)
+		} else {
+			return P2_CheckLowerDiagnal(board, from, color, *king, to)
+		}
+	}
+	return true, nil
+}
+
+// level 2 pin check funcs
+
+func P2_CheckRank(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
 	if from.File == king.File {
 		if from.Rank > king.Rank {
 
@@ -208,7 +232,7 @@ func P_CheckRank(board [8][8]Piece, from Position, color Colors, king Position, 
 
 	return true, nil
 }
-func P_CheckFile(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
+func P2_CheckFile(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
 
 	if from.File > king.File {
 
@@ -282,7 +306,28 @@ func P_CheckFile(board [8][8]Piece, from Position, color Colors, king Position, 
 
 	return true, nil
 }
-func P_CheckUpperRightDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
+
+// diagnal checkers
+func P2_CheckUpperDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
+	fmt.Println(king.Rank, king.File, from.Rank, from.File)
+	if from.Rank > king.Rank {
+		return P3_CheckUpperRightDiagnal(board, from, color, king, to)
+	} else {
+		return P3_CheckUpperLeftDiagnal(board, from, color, king, to)
+	}
+
+}
+func P2_CheckLowerDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
+	if from.Rank > king.Rank {
+		return P3_CheckLowerRightDiagnal(board, from, color, king, to)
+	} else {
+		return P3_CheckLowerLeftDiagnal(board, from, color, king, to)
+
+	}
+}
+
+// level 3 Pin check funcs
+func P3_CheckUpperRightDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
 	l := king.Rank + 1
 	r := king.File + 1
 	fmt.Println(board[r][l], l, r, from.Rank, from.File, "hellorrr")
@@ -322,7 +367,7 @@ func P_CheckUpperRightDiagnal(board [8][8]Piece, from Position, color Colors, ki
 	}
 	return true, nil
 }
-func P_CheckUpperLeftDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
+func P3_CheckUpperLeftDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
 	l := king.Rank - 1
 	r := king.File + 1
 	fmt.Println(board[r][l], l, r, from.Rank, from.File, "hellodsgfrrr")
@@ -363,7 +408,7 @@ func P_CheckUpperLeftDiagnal(board [8][8]Piece, from Position, color Colors, kin
 	}
 	return true, nil
 }
-func P_CheckLowerRightDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
+func P3_CheckLowerRightDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
 	l := king.Rank + 1
 	r := king.File - 1
 	for l < from.Rank && r > from.File {
@@ -409,7 +454,7 @@ func P_CheckLowerRightDiagnal(board [8][8]Piece, from Position, color Colors, ki
 	}
 	return true, nil
 }
-func P_CheckLowerLeftDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
+func P3_CheckLowerLeftDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
 	l := king.Rank - 1
 	r := king.File - 1
 	for l > from.Rank && r > from.File {
@@ -444,44 +489,6 @@ func P_CheckLowerLeftDiagnal(board [8][8]Piece, from Position, color Colors, kin
 		}
 		r--
 		l--
-	}
-	return true, nil
-}
-func P_CheckUpperDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
-	fmt.Println(king.Rank, king.File, from.Rank, from.File)
-	if from.Rank > king.Rank {
-		return P_CheckUpperRightDiagnal(board, from, color, king, to)
-	} else {
-		return P_CheckUpperLeftDiagnal(board, from, color, king, to)
-	}
-
-}
-func P_CheckLowerDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
-	if from.Rank > king.Rank {
-		return P_CheckLowerRightDiagnal(board, from, color, king, to)
-	} else {
-		return P_CheckLowerLeftDiagnal(board, from, color, king, to)
-
-	}
-}
-func CheckPinedDiagnly(fen *Fen, move Move) (bool, error) {
-	from := move.From
-	to := move.To
-	board := fen.Board
-	color := fen.Board[from.File][from.Rank].Color
-	king, err := GetKingPosition(fen, color)
-
-	if err != nil {
-		fmt.Print("hi")
-		return false, fmt.Errorf("could not find king : validate_helper")
-	}
-
-	if math.Abs(float64(king.File)-float64(from.File)) == math.Abs(float64(king.Rank)-float64(from.Rank)) {
-		if from.File > king.File {
-			return P_CheckUpperDiagnal(board, from, color, *king, to)
-		} else {
-			return P_CheckLowerDiagnal(board, from, color, *king, to)
-		}
 	}
 	return true, nil
 }
