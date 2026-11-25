@@ -7,7 +7,7 @@ import (
 	. "github.com/Mikhail-Tal63/Rooksy/internal/game/game_helpers"
 )
 
-func TestPinedPiece(t *testing.T) {
+func TestVerticalHorizontalPin(t *testing.T) {
 
 	tests := []struct {
 		name     string
@@ -161,4 +161,132 @@ func TestPinedPiece(t *testing.T) {
 		)
 	}
 
+}
+
+func TestDiagnlePin(t *testing.T) {
+	tests := []struct {
+		name     string
+		from     string
+		to       string
+		expected bool
+	}{{
+		name:     "Diagonal bishop pin NE",
+		from:     "k6b/8/8/8/3R4/8/8/K7 w - - 0 1",
+		to:       "k6b/8/8/8/4R3/8/8/K7 w - - 0 1",
+		expected: true,
+	},
+		{
+			name:     "Diagonal bishop pin NW",
+			from:     "b6k/8/8/8/4R3/8/8/7K w - - 0 1",
+			to:       "b6k/8/8/8/3R4/8/8/7K w - - 0 1",
+			expected: true,
+		},
+		{
+			name:     "Diagonal bishop pin SE",
+			from:     "K6k/8/8/3R4/8/8/8/7b w - - 0 1",
+			to:       "K6k/8/8/4R3/8/8/8/7b w - - 0 1",
+			expected: true,
+		},
+		{
+			name:     "Diagonal bishop pin SW",
+			from:     "k6K/8/8/4R3/8/8/8/b7 w - - 0 1",
+			to:       "k6K/8/8/3R4/8/8/8/b7 w - - 0 1",
+			expected: true,
+		},
+		{
+			name:     "Black diagonal bishop pin NE",
+			from:     "K6B/8/8/8/3r4/8/8/k7 b - - 0 1",
+			to:       "K6B/8/8/8/4r3/8/8/k7 b - - 0 1",
+			expected: true,
+		},
+		{
+			name:     "Black diagonal bishop pin NW",
+			from:     "B6K/8/8/8/4r3/8/8/7k b - - 0 1",
+			to:       "B6K/8/8/8/3r4/8/8/7k b - - 0 1",
+			expected: true,
+		},
+		{
+			name:     "Black diagonal queen pin SE",
+			from:     "k6K/8/8/3r4/8/8/8/7Q b - - 0 1",
+			to:       "k6K/8/8/4r3/8/8/8/7Q b - - 0 1",
+			expected: true,
+		},
+		{
+			name:     "Black diagonal queen pin SW",
+			from:     "K6k/8/8/4r3/8/8/8/Q7 b - - 0 1",
+			to:       "K6k/8/8/3r4/8/8/8/Q7 b - - 0 1",
+			expected: true,
+		},
+		{
+			name:     "No diagonal pin NE - two blockers",
+			from:     "k6b/8/8/4N3/3R4/8/8/K7 w - - 0 1",
+			to:       "k6b/8/8/4N3/4R3/8/8/K7 w - - 0 1",
+			expected: false,
+		},
+		{
+			name:     "No diagonal pin NW - two blockers",
+			from:     "b6k/8/8/3N4/4R3/8/8/7K w - - 0 1",
+			to:       "b6k/8/8/3N4/3R4/8/8/7K w - - 0 1",
+			expected: false,
+		},
+		{
+			name:     "No diagonal pin SE - two blockers",
+			from:     "K6k/8/8/3R4/4N3/8/8/7b w - - 0 1",
+			to:       "K6k/8/8/4R3/4N3/8/8/7b w - - 0 1",
+			expected: false,
+		},
+		{
+			name:     "No diagonal pin SW - two blockers",
+			from:     "k6K/8/8/4R3/3N4/8/8/b7 w - - 0 1",
+			to:       "k6K/8/8/3R4/3N4/8/8/b7 w - - 0 1",
+			expected: false,
+		},
+		{
+			name:     "No diagonal pin - attacker is rook",
+			from:     "k6r/8/8/8/3R4/8/8/K7 w - - 0 1",
+			to:       "k6r/8/8/8/4R3/8/8/K7 w - - 0 1",
+			expected: false,
+		},
+		{
+			name:     "No diagonal pin - friendly bishop",
+			from:     "k6B/8/8/8/3R4/8/8/K7 w - - 0 1",
+			to:       "k6B/8/8/8/4R3/8/8/K7 w - - 0 1",
+			expected: false,
+		},
+		{
+			name:     "No diagonal pin - piece outside pin line",
+			from:     "k6b/8/8/4P3/4R3/8/8/K7 w - - 0 1",
+			to:       "k6b/8/8/4P3/5R2/8/8/K7 w - - 0 1",
+			expected: false,
+		},
+		{
+			name:     "No diagonal pin - enemy blocker",
+			from:     "k6b/8/8/4n3/3R4/8/8/K7 w - - 0 1",
+			to:       "k6b/8/8/4n3/4R3/8/8/K7 w - - 0 1",
+			expected: false,
+		},
+	}
+
+	for _, test := range tests {
+		parseFrom, err := ParseFEN(test.from)
+		if err != nil {
+			panic(err)
+		}
+		parseTo, err := ParseFEN(test.to)
+		if err != nil {
+			panic(err)
+		}
+		move, err := LocateMove(parseFrom, parseTo)
+		if err != nil {
+			panic(err)
+		}
+		pin, err := CheckPinedDiagnly(parseFrom, *move)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf(
+			"%-25s Expected: %-5v Got: %-5v\n",
+			test.name, test.expected, pin,
+		)
+	}
 }
