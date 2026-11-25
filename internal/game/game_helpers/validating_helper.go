@@ -2,6 +2,7 @@ package gamehelpers
 
 import (
 	"fmt"
+	"math"
 
 	. "github.com/Mikhail-Tal63/Rooksy/internal/game/game_DTO"
 )
@@ -318,6 +319,47 @@ func P_CheckUpperRightDiagnal(board [8][8]Piece, from Position, color Colors, ki
 		}
 		r++
 		l++
+	}
+	return true, nil
+}
+func P_CheckUpperLeftDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
+	l := king.Rank - 1
+	r := king.File + 1
+	fmt.Println(board[r][l], l, r, from.Rank, from.File, "hellodsgfrrr")
+	for l > from.Rank && r < from.File {
+
+		if board[r][l].Type != Empty {
+
+			return true, nil
+		}
+		r++
+		l--
+	}
+	l = from.Rank - 1
+	r = from.File + 1
+	for l >= 0 && r < 8 {
+		fmt.Println(board[r][l], l, r, from.Rank, from.File)
+		if board[r][l].Type != Empty {
+
+			if board[r][l].Type == Queen && board[r][l].Color != color {
+				if math.Abs(float64(to.File)-float64(from.Rank)) != math.Abs(float64(to.Rank)-float64(from.File)) {
+					return false, nil
+				}
+				return true, nil
+
+			}
+			if board[r][l].Type == Bishop && board[r][l].Color != color {
+				fmt.Println(board[r][l], to.Rank, to.File, from.Rank, from.File)
+				if math.Abs(float64(to.File)-float64(from.Rank)) != math.Abs(float64(to.Rank)-float64(from.File)) {
+					return false, nil
+				}
+				return true, nil
+
+				//if you suptact from-from and to -to and got same answear you good else bad
+			}
+		}
+		r++
+		l--
 	}
 	return true, nil
 }
