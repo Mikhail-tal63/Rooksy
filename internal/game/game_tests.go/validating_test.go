@@ -294,17 +294,165 @@ func TestDiagnlePin(t *testing.T) {
 	}
 }
 
-/*
 func TestValidateBishopMove(t *testing.T) {
 	tests := []struct {
 		name     string
 		from     string
 		to       string
-		expected string
+		expected bool
 	}{
-
+		{
+			name:     "NE bishop clear",
+			from:     "8/8/8/7k/K7/8/1B6/8 w - - 0 1",
+			to:       "8/8/5B2/7k/K7/8/8/8 w - - 0 1",
+			expected: true,
+		},
+		{
+			name:     "NE queen clear",
+			from:     "8/8/8/7k/K7/8/1Q6/8 w - - 0 1",
+			to:       "8/8/5Q2/7k/K7/8/8/8 w - - 0 1",
+			expected: true,
+		},
+		{
+			name:     "NE bishop friendly blocker",
+			from:     "8/8/8/7k/K2P4/8/1B6/8 w - - 0 1",
+			to:       "8/8/5B2/7k/K2P4/8/8/8 w - - 0 1",
+			expected: false,
+		},
+		{
+			name:     "NE bishop enemy blocker",
+			from:     "8/8/8/7k/K2p4/8/1B6/8 w - - 0 1",
+			to:       "8/8/5B2/7k/K2p4/8/8/8 w - - 0 1",
+			expected: false,
+		},
+		{
+			name:     "NW bishop clear",
+			from:     "8/8/8/7k/K7/8/6B1/8 w - - 0 1",
+			to:       "8/8/2B5/7k/K7/8/8/8 w - - 0 1",
+			expected: true,
+		},
+		{
+			name:     "NW queen clear",
+			from:     "8/8/8/7k/K7/8/6Q1/8 w - - 0 1",
+			to:       "8/8/2Q5/7k/K7/8/8/8 w - - 0 1",
+			expected: true,
+		},
+		{
+			name:     "NW bishop friendly blocker",
+			from:     "8/8/8/7k/K3P3/8/6B1/8 w - - 0 1",
+			to:       "8/8/2B5/7k/K3P3/8/8/8 w - - 0 1",
+			expected: false,
+		},
+		{
+			name:     "NW bishop enemy blocker",
+			from:     "8/8/8/7k/K3p3/8/6B1/8 w - - 0 1",
+			to:       "8/8/2B5/7k/K3p3/8/8/8 w - - 0 1",
+			expected: false,
+		}, {
+			name:     "SE bishop clear",
+			from:     "8/1B6/8/7k/K7/8/8/8 w - - 0 1",
+			to:       "8/8/8/7k/K7/5B2/8/8 w - - 0 1",
+			expected: true,
+		},
+		{
+			name:     "SE queen clear",
+			from:     "8/1Q6/8/7k/K7/8/8/8 w - - 0 1",
+			to:       "8/8/8/7k/K7/5Q2/8/8 w - - 0 1",
+			expected: true,
+		},
+		{
+			name:     "SE bishop friendly blocker",
+			from:     "8/1B6/8/3P3k/K7/8/8/8 w - - 0 1",
+			to:       "8/8/8/3P3k/K7/5B2/8/8 w - - 0 1",
+			expected: false,
+		},
+		{
+			name:     "SE bishop enemy blocker",
+			from:     "8/1B6/8/3p3k/K7/8/8/8 w - - 0 1",
+			to:       "8/8/8/3p3k/K7/5B2/8/8 w - - 0 1",
+			expected: false,
+		}, {
+			name:     "SW bishop clear",
+			from:     "8/6B1/8/7k/K7/8/8/8 w - - 0 1",
+			to:       "8/8/8/7k/K7/2B5/8/8 w - - 0 1",
+			expected: true,
+		},
+		{
+			name:     "SW queen clear",
+			from:     "8/6Q1/8/7k/K7/8/8/8 w - - 0 1",
+			to:       "8/8/8/7k/K7/2Q5/8/8 w - - 0 1",
+			expected: true,
+		},
+		{
+			name:     "SW bishop friendly blocker",
+			from:     "8/6B1/8/4P2k/K7/8/8/8 w - - 0 1",
+			to:       "8/8/8/4P2k/K7/2B5/8/8 w - - 0 1",
+			expected: false,
+		},
+		{
+			name:     "SW bishop enemy blocker",
+			from:     "8/6B1/8/4p2k/K7/8/8/8 w - - 0 1",
+			to:       "8/8/8/4p2k/K7/2B5/8/8 w - - 0 1",
+			expected: false,
+		}, {
+			name:     "Adjacent diagonal",
+			from:     "8/8/8/7k/K2B4/8/8/8 w - - 0 1",
+			to:       "8/8/8/4B2k/K7/8/8/8 w - - 0 1",
+			expected: true,
+		},
+		{
+			name:     "Enemy on destination",
+			from:     "8/8/5n2/7k/K7/8/1B6/8 w - - 0 1",
+			to:       "8/8/5B2/7k/K7/8/8/8 w - - 0 1",
+			expected: true,
+		},
+		{
+			name:     "Blocker immediately after source",
+			from:     "8/8/8/7k/K7/2p5/1B6/8 w - - 0 1",
+			to:       "8/8/5B2/7k/K7/2p5/8/8 w - - 0 1",
+			expected: false,
+		},
+		{
+			name:     "Blocker immediately before destination",
+			from:     "8/8/8/4P2k/K7/8/1B6/8 w - - 0 1",
+			to:       "8/8/5B2/4P2k/K7/8/8/8 w - - 0 1",
+			expected: false,
+		},
+		{
+			name:     "Piece beyond destination",
+			from:     "8/8/8/4p2k/K7/8/1B6/8 w - - 0 1",
+			to:       "8/8/8/4p2k/K2B4/8/8/8 w - - 0 1",
+			expected: true,
+		},
+		{
+			name:     "Piece outside path",
+			from:     "8/8/8/3P3k/K7/8/1B6/8 w - - 0 1",
+			to:       "8/8/5B2/3P3k/K7/8/8/8 w - - 0 1",
+			expected: true,
+		},
 	}
-	for _ ,test := range tests{
-
+	for _, test := range tests {
+		parseFrom, err := ParseFEN(test.from)
+		if err != nil {
+			panic(err)
+		}
+		parseTo, err := ParseFEN(test.to)
+		if err != nil {
+			panic(err)
+		}
+		move, err := LocateMove(parseFrom, parseTo)
+		if err != nil {
+			panic(err)
+		}
+		pin, err := ValidateBishopMove(*move, *parseFrom)
+		if err != nil {
+			panic(err)
+		}
+		if pin != test.expected {
+			t.Errorf(
+				"%s: expected %v, got %v",
+				test.name, test.expected, pin,
+			)
+		}
 	}
-}*/
+}
