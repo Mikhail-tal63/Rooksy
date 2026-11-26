@@ -408,6 +408,7 @@ func P3_CheckUpperRightDiagnal(board [8][8]Piece, from Position, color Colors, k
 
 				//if you suptact from-from and to -to and got same answear you good else bad
 			}
+			return true, nil
 		}
 		r++
 		l++
@@ -449,6 +450,7 @@ func P3_CheckUpperLeftDiagnal(board [8][8]Piece, from Position, color Colors, ki
 
 				//if you suptact from-from and to -to and got same answear you good else bad
 			}
+			return true, nil
 		}
 		r++
 		l--
@@ -495,6 +497,7 @@ func P3_CheckLowerRightDiagnal(board [8][8]Piece, from Position, color Colors, k
 
 				//if you suptact from-from and to -to and got same answear you good else bad
 			}
+			return true, nil
 		}
 		r--
 		l++
@@ -533,6 +536,7 @@ func P3_CheckLowerLeftDiagnal(board [8][8]Piece, from Position, color Colors, ki
 				return true, nil
 				//if you suptact from-from and to -to and got same answear you good else bad
 			}
+			return true, nil
 		}
 		r--
 		l--
