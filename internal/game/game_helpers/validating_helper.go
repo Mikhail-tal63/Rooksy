@@ -102,6 +102,8 @@ func ValidateDiagnalMoves(move Move, fen Fen) (bool, error) {
 			if board[l][r].Type != Empty {
 				return false, nil
 			}
+			l++
+			r++
 		}
 	} else if from.File > to.File && from.Rank > to.Rank {
 		l := from.File - 1
@@ -110,6 +112,8 @@ func ValidateDiagnalMoves(move Move, fen Fen) (bool, error) {
 			if board[l][r].Type != Empty {
 				return false, nil
 			}
+			l--
+			r--
 		}
 	} else if from.File < to.File && from.Rank > to.Rank {
 		l := from.File + 1
@@ -118,6 +122,8 @@ func ValidateDiagnalMoves(move Move, fen Fen) (bool, error) {
 			if board[l][r].Type != Empty {
 				return false, nil
 			}
+			l++
+			r--
 		}
 	} else if from.File > to.File && from.Rank < to.Rank {
 		l := from.File - 1
@@ -126,6 +132,8 @@ func ValidateDiagnalMoves(move Move, fen Fen) (bool, error) {
 			if board[l][r].Type != Empty {
 				return false, nil
 			}
+			l--
+			r++
 		}
 	}
 	return false, nil
