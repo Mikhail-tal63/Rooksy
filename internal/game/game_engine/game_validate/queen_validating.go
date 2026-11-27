@@ -2,7 +2,6 @@ package game
 
 import (
 	. "github.com/Mikhail-Tal63/Rooksy/internal/game/game_DTO"
-	. "github.com/Mikhail-Tal63/Rooksy/internal/game/game_errors"
 	h "github.com/Mikhail-Tal63/Rooksy/internal/game/game_helpers"
 )
 
@@ -16,7 +15,7 @@ func ValidateQueenMove(fen, secondFEN *Fen) (bool, error) {
 		return false, err
 	}
 	if !notPined {
-		return false, ErrIllegalMove
+		return false, nil
 	}
 	var legalMove bool
 
@@ -33,7 +32,7 @@ func ValidateQueenMove(fen, secondFEN *Fen) (bool, error) {
 	}
 
 	if !legalMove {
-		return false, ErrIllegalMove
+		return false, nil
 	}
 	return true, nil
 }
