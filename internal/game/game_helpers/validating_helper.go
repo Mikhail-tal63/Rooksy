@@ -160,9 +160,14 @@ func ValidateLShapedMoves(move Move, fen Fen) (bool, error) {
 	if move.From.File > 7 || move.From.Rank < 0 {
 		return false, nil
 	}
+	color := fen.Board[move.From.File][move.From.Rank].Color
+	board := fen.Board
 	from := move.From
 	rank := move.To.Rank
 	file := move.To.File
+	if board[file][rank].Color == color && board[file][rank].Type != Empty {
+		return false, nil
+	}
 	switch {
 	case rank == from.Rank+1 && file == from.File+2:
 		return true, nil

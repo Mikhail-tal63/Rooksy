@@ -23,7 +23,7 @@ func ValidateBishopMove(fen, secondFEN *Fen) (bool, error) {
 		return false, err
 	}
 	if !legalMove {
-		return false, ErrIllegalMove
+		return false, nil
 	}
 	return true, nil
 }

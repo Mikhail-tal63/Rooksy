@@ -351,4 +351,3 @@ func GetKingPosition(fen *Fen, color Colors) (*Position, error) {
 	}
 	return nil, fmt.Errorf("King is not found")
 }
-func ValidateKnightMove(move Move, fen *Fen)
