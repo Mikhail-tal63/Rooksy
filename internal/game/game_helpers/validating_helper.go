@@ -153,7 +153,7 @@ func ValidateDiagnalMoves(move Move, fen Fen) (bool, error) {
 	}
 	return true, nil
 }
-func ValidateKnightMoves(move Move, fen Fen) (bool, error) {
+func ValidateLShapedMoves(move Move, fen Fen) (bool, error) {
 	if move.To.File > 7 || move.To.Rank < 0 {
 		return false, nil
 	}

@@ -17,7 +17,7 @@ func ValidateKnightMove(fen, secondFEN *Fen) (bool, error) {
 	if !pin {
 		return false, err
 	}
-	legal, err := ValidateKnightMove(fen, secondFEN)
+	legal, err := h.ValidateLShapedMoves(*move, *fen)
 	if err != nil {
 		return false, err
 	}
