@@ -180,7 +180,35 @@ func ParseColor(c rune) (Colors, error) {
 	}
 	return 0, fmt.Errorf("Not valid piece %v", c)
 }
-
+func ParseEnPassant(s string) (*Position, error) {
+	var r string = string(s[0])
+	var rank int
+	switch r {
+	case "a":
+		rank = 0
+	case "b":
+		rank = 1
+	case "c":
+		rank = 2
+	case "d":
+		rank = 3
+	case "e":
+		rank = 4
+	case "f":
+		rank = 5
+	case "g":
+		rank = 6
+	case "h":
+		rank = 7
+	default:
+		return nil, fmt.Errorf("invaled Enpassant Value")
+	}
+	position := &Position{
+		File: int(s[1]),
+		Rank: rank,
+	}
+	return position, nil
+}
 func ParseCastling(s string) (CastlingRights, error) {
 	var wk, wq, bk, bq bool = false, false, false, false
 	castle := CastlingRights{
