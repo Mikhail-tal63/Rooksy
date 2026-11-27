@@ -153,7 +153,40 @@ func ValidateDiagnalMoves(move Move, fen Fen) (bool, error) {
 	}
 	return true, nil
 }
+func ValidateKnightMoves(move Move, fen Fen) (bool, error) {
+	if move.To.File > 7 || move.To.Rank < 0 {
+		return false, nil
+	}
+	if move.From.File > 7 || move.From.Rank < 0 {
+		return false, nil
+	}
+	from := move.From
+	rank := move.To.Rank
+	file := move.To.File
+	switch {
+	case rank == from.Rank+1 && file == from.File+2:
+		return true, nil
+	case rank == from.Rank-1 && file == from.File+2:
+		return true, nil
+	case rank == from.Rank-2 && file == from.File+1:
+		return true, nil
+	case rank == from.Rank-2 && file == from.File-1:
+		return true, nil
+	case rank == from.Rank-1 && file == from.File-2:
+		return true, nil
+	case rank == from.Rank+1 && file == from.File-2:
+		return true, nil
+	case rank == from.Rank+2 && file == from.File-1:
+		return true, nil
+	case rank == from.Rank+2 && file == from.File+1:
+		return true, nil
+	default:
+		return false, nil
+	}
 
+}
+
+// checking pined piece
 func CheckPinedPeice(fen *Fen, move Move) (bool, error) {
 
 	hv, err := CheckPinedPeiceHorVir(fen, move)
