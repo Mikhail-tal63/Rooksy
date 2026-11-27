@@ -444,7 +444,7 @@ func TestValidateBishopMove(t *testing.T) {
 		if err != nil {
 			panic(err)
 		}
-		pin, err := ValidateBishopMove(*move, *parseFrom)
+		pin, err := ValidateDiagnalMoves(*move, *parseFrom)
 		if err != nil {
 			panic(err)
 		}

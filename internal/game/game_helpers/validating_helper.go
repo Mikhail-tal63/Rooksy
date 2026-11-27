@@ -92,7 +92,7 @@ func ValidateVirHorzMoves(move Move, fen Fen) (bool, error) {
 	return true, nil
 
 }
-func ValidateBishopMove(move Move, fen Fen) (bool, error) {
+func ValidateDiagnalMoves(move Move, fen Fen) (bool, error) {
 	var from, to Position = move.From, move.To
 	board := fen.Board
 	if from.File < to.File && from.Rank < to.Rank {
