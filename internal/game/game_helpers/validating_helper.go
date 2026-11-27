@@ -96,8 +96,12 @@ func ValidateDiagnalMoves(move Move, fen Fen) (bool, error) {
 	var from, to Position = move.From, move.To
 	board := fen.Board
 	if from.File < to.File && from.Rank < to.Rank {
+		if to.File-from.File != to.Rank-from.Rank {
+			return false, nil
+		}
 		l := from.File + 1
 		r := from.Rank + 1
+
 		for l < to.File && r < to.Rank {
 			if board[l][r].Type != Empty {
 				return false, nil
@@ -106,6 +110,9 @@ func ValidateDiagnalMoves(move Move, fen Fen) (bool, error) {
 			r++
 		}
 	} else if from.File > to.File && from.Rank > to.Rank {
+		if to.File-from.File != to.Rank-from.Rank {
+			return false, nil
+		}
 		l := from.File - 1
 		r := from.Rank - 1
 		for l > to.File && r > to.Rank {
@@ -116,6 +123,11 @@ func ValidateDiagnalMoves(move Move, fen Fen) (bool, error) {
 			r--
 		}
 	} else if from.File < to.File && from.Rank > to.Rank {
+
+		if math.Abs(float64(from.File)-float64(to.File)) != math.Abs(float64(from.Rank)-float64(to.Rank)) {
+			return false, nil
+		}
+
 		l := from.File + 1
 		r := from.Rank - 1
 		for l < to.File && r > to.Rank {
@@ -126,6 +138,9 @@ func ValidateDiagnalMoves(move Move, fen Fen) (bool, error) {
 			r--
 		}
 	} else if from.File > to.File && from.Rank < to.Rank {
+		if math.Abs(float64(from.File)-float64(to.File)) != math.Abs(float64(from.Rank)-float64(to.Rank)) {
+			return false, nil
+		}
 		l := from.File - 1
 		r := from.Rank + 1
 		for l > to.File && r < to.Rank {
@@ -197,7 +212,7 @@ func CheckPinedDiagnly(fen *Fen, move Move) (bool, error) {
 	king, err := GetKingPosition(fen, color)
 
 	if err != nil {
-		fmt.Print("hi")
+
 		return false, fmt.Errorf("could not find king : validate_helper")
 	}
 
@@ -220,7 +235,6 @@ func P2_CheckRank(board [8][8]Piece, from Position, color Colors, king Position,
 			pass := false
 			for i := king.Rank + 1; i < from.Rank; i++ {
 
-				fmt.Println(board[king.File][i], i, king.Rank, from.Rank)
 				if board[king.File][i].Type != Empty {
 					pass = true
 
@@ -231,7 +245,6 @@ func P2_CheckRank(board [8][8]Piece, from Position, color Colors, king Position,
 				for i := from.Rank + 1; i < 8; i++ {
 
 					if board[king.File][i].Type != Empty {
-						fmt.Print(board[king.File][i])
 						if board[king.File][i].Type == Queen && board[king.File][i].Color != color {
 							if king.File == to.File {
 								return true, nil
@@ -253,10 +266,9 @@ func P2_CheckRank(board [8][8]Piece, from Position, color Colors, king Position,
 			pass := false
 			for i := king.Rank - 1; i > from.Rank; i-- {
 
-				fmt.Println(board[king.File][i], i, king.Rank, from.Rank)
 				if board[king.File][i].Type != Empty {
 					pass = true
-					fmt.Println(board[king.File][i])
+
 					break
 				}
 			}
@@ -264,7 +276,7 @@ func P2_CheckRank(board [8][8]Piece, from Position, color Colors, king Position,
 				for i := from.Rank - 1; i >= 0; i-- {
 
 					if board[king.File][i].Type != Empty {
-						fmt.Print(board[king.File][i])
+
 						if board[king.File][i].Type == Queen && board[king.File][i].Color != color {
 							if king.File == to.File {
 								return true, nil
@@ -294,7 +306,6 @@ func P2_CheckFile(board [8][8]Piece, from Position, color Colors, king Position,
 		pass := false
 		for i := king.File + 1; i < from.File; i++ {
 
-			fmt.Println(board[i][king.Rank], i, king.File, from.File)
 			if board[i][king.Rank].Type != Empty {
 				pass = true
 
@@ -305,19 +316,18 @@ func P2_CheckFile(board [8][8]Piece, from Position, color Colors, king Position,
 			for i := from.File + 1; i < 8; i++ {
 
 				if board[i][king.Rank].Type != Empty {
-					fmt.Print(board[i][king.Rank])
+
 					if board[i][king.Rank].Type == Queen && board[i][king.Rank].Color != color {
 						if king.Rank == to.Rank {
 							return true, nil
 						}
-						fmt.Print(board[i][king.Rank])
+
 						return false, nil
 					}
 					if board[i][king.Rank].Type == Rook && board[i][king.Rank].Color != color {
 						if king.Rank == to.Rank {
 							return true, nil
 						}
-						fmt.Print(board[i][king.Rank])
 						return false, nil
 					}
 					break
@@ -329,10 +339,8 @@ func P2_CheckFile(board [8][8]Piece, from Position, color Colors, king Position,
 		pass := false
 		for i := king.File - 1; i > from.File; i-- {
 
-			fmt.Println(board[i][king.Rank], i, king.File, from.File)
 			if board[i][king.Rank].Type != Empty {
 				pass = true
-				fmt.Println(board[i][king.Rank])
 				break
 			}
 		}
@@ -340,7 +348,6 @@ func P2_CheckFile(board [8][8]Piece, from Position, color Colors, king Position,
 			for i := from.File - 1; i >= 0; i-- {
 
 				if board[i][king.Rank].Type != Empty {
-					fmt.Print(board[i][king.Rank])
 					if board[i][king.Rank].Type == Queen && board[i][king.Rank].Color != color {
 						if king.Rank == to.Rank {
 							return true, nil
@@ -364,7 +371,6 @@ func P2_CheckFile(board [8][8]Piece, from Position, color Colors, king Position,
 
 // diagnal checkers
 func P2_CheckUpperDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
-	fmt.Println(king.Rank, king.File, from.Rank, from.File)
 	if from.Rank > king.Rank {
 		return P3_CheckUpperRightDiagnal(board, from, color, king, to)
 	} else {
@@ -385,7 +391,6 @@ func P2_CheckLowerDiagnal(board [8][8]Piece, from Position, color Colors, king P
 func P3_CheckUpperRightDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
 	l := king.Rank + 1
 	r := king.File + 1
-	fmt.Println(board[r][l], l, r, from.Rank, from.File, "hellorrr")
 	for l < from.Rank && r < from.File {
 
 		if board[r][l].Type != Empty {
@@ -398,7 +403,6 @@ func P3_CheckUpperRightDiagnal(board [8][8]Piece, from Position, color Colors, k
 	l = from.Rank + 1
 	r = from.File + 1
 	for l < 8 && r < 8 {
-		fmt.Println(board[r][l], l, r, king.File, from.File)
 		if board[r][l].Type != Empty {
 
 			if board[r][l].Type == Queen && board[r][l].Color != color {
@@ -426,7 +430,6 @@ func P3_CheckUpperRightDiagnal(board [8][8]Piece, from Position, color Colors, k
 func P3_CheckUpperLeftDiagnal(board [8][8]Piece, from Position, color Colors, king Position, to Position) (bool, error) {
 	l := king.Rank - 1
 	r := king.File + 1
-	fmt.Println(board[r][l], l, r, from.Rank, from.File, "hellodsgfrrr")
 	for l > from.Rank && r < from.File {
 
 		if board[r][l].Type != Empty {
@@ -439,7 +442,6 @@ func P3_CheckUpperLeftDiagnal(board [8][8]Piece, from Position, color Colors, ki
 	l = from.Rank - 1
 	r = from.File + 1
 	for l >= 0 && r < 8 {
-		fmt.Println(board[r][l], l, r, from.Rank, from.File)
 		if board[r][l].Type != Empty {
 
 			if board[r][l].Type == Queen && board[r][l].Color != color {
@@ -450,7 +452,6 @@ func P3_CheckUpperLeftDiagnal(board [8][8]Piece, from Position, color Colors, ki
 
 			}
 			if board[r][l].Type == Bishop && board[r][l].Color != color {
-				fmt.Println(board[r][l], to.Rank, to.File, from.Rank, from.File)
 				if math.Abs(float64(to.File)-float64(from.Rank)) != math.Abs(float64(to.Rank)-float64(from.File)) {
 					return false, nil
 				}
@@ -494,7 +495,6 @@ func P3_CheckLowerRightDiagnal(board [8][8]Piece, from Position, color Colors, k
 
 			}
 			if board[r][l].Type == Bishop && board[r][l].Color != color {
-				fmt.Println(board[r][l], to.Rank, to.File, from.Rank, from.File, "hi")
 				if from.File-from.Rank == to.File-to.Rank {
 					return false, nil
 				}
