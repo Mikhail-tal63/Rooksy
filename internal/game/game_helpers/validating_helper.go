@@ -136,7 +136,7 @@ func ValidateDiagnalMoves(move Move, fen Fen) (bool, error) {
 			r++
 		}
 	}
-	return false, nil
+	return true, nil
 }
 
 func CheckPinedPeice(fen *Fen, move Move) (bool, error) {
