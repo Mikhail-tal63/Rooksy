@@ -204,7 +204,7 @@ func ParseEnPassant(s string) (*Position, error) {
 		return nil, fmt.Errorf("invaled Enpassant Value")
 	}
 	position := &Position{
-		File: int(s[1]),
+		File: int(s[1]-'0') - 1,
 		Rank: rank,
 	}
 	return position, nil

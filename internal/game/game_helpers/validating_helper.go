@@ -198,34 +198,40 @@ func ValidateLegalPawnMoves(move Move, fen Fen) (bool, error) {
 		return false, nil
 	}
 
-	enpassant, err := ParseEnPassant(fen.EnPassant)
-	if err != nil {
-		return false, err
-	}
 	color := fen.Board[move.From.File][move.From.Rank].Color
 	board := fen.Board
 	from := move.From
 	file := move.To.File
 	rank := move.To.Rank
 
-	if enpassant != nil && *enpassant == move.To {
-		return true, nil
+	if fen.EnPassant != "" {
+		enpassant, err := ParseEnPassant(fen.EnPassant)
+		if err != nil {
+			return false, err
+		}
+
+		if enpassant != nil && *enpassant == move.To {
+			return true, nil
+		}
 	}
 	if rank == from.Rank {
 		if color == White {
+
 			switch {
-			case file == from.File+1 && board[file][rank].Type == Empty:
+			case from.File+1 < 8 && file == from.File+1 && board[file][rank].Type == Empty:
 				return true, nil
-			case file == from.File+2 && board[file][rank].Type == Empty && rank == 1:
+			case from.File+2 < 8 && file == from.File+2 &&
+				board[file-1][rank].Type == Empty && board[file][rank].Type == Empty && from.File == 1:
 				return true, nil
 			default:
 				return false, nil
 			}
 		} else {
 			switch {
-			case file == from.File-1 && board[file][rank].Type == Empty:
+			case from.File-1 > 0 && file == from.File-1 && board[file][rank].Type == Empty:
 				return true, nil
-			case file == from.File-2 && board[file][rank].Type == Empty && rank == 6:
+			case from.File-2 > 0 && file == from.File-2 &&
+				board[file+1][rank].Type == Empty && board[file][rank].Type == Empty && from.File == 6:
 				return true, nil
 			default:
 				return false, nil
@@ -234,18 +240,26 @@ func ValidateLegalPawnMoves(move Move, fen Fen) (bool, error) {
 	} else {
 		if color == White {
 			switch {
-			case rank == from.Rank+1 && file == from.File+1 && board[file][rank].Type != Empty:
+			case from.File+1 < 8 && from.Rank+1 < 8 &&
+				rank == from.Rank+1 && file == from.File+1 &&
+				board[file][rank].Type != Empty && board[file][rank].Color != color:
 				return true, nil
-			case rank == from.Rank-1 && file == from.File+1 && board[file][rank].Type != Empty:
+			case from.File+1 < 8 && from.Rank-1 > 0 &&
+				rank == from.Rank-1 && file == from.File+1 &&
+				board[file][rank].Type != Empty && board[file][rank].Color != color:
 				return true, nil
 			default:
 				return false, nil
 			}
 		} else {
 			switch {
-			case rank == from.Rank+1 && file == from.File-1 && board[file][rank].Type != Empty:
+			case from.File-1 > 0 && from.Rank+1 < 8 &&
+				rank == from.Rank+1 && file == from.File-1 &&
+				board[file][rank].Type != Empty && board[file][rank].Color != color:
 				return true, nil
-			case rank == from.Rank-1 && file == from.File-1 && board[file][rank].Type != Empty:
+			case from.File-1 > 0 && from.Rank-1 > 0 &&
+				rank == from.Rank-1 && file == from.File-1 &&
+				board[file][rank].Type != Empty && board[file][rank].Color != color:
 				return true, nil
 			default:
 				return false, nil
