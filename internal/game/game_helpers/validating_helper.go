@@ -669,7 +669,7 @@ func P3_CheckLowerLeftDiagnal(board [8][8]Piece, from Position, color Colors, ki
 }
 
 // validate king squire
-func CheckKnightControll(board [8][8]Piece, square Position) (bool, error) {
+func CheckKnightControl(board [8][8]Piece, square Position) (bool, error) {
 	file := square.File
 	rank := square.Rank
 	switch {
@@ -691,4 +691,54 @@ func CheckKnightControll(board [8][8]Piece, square Position) (bool, error) {
 		return false, nil
 	}
 	return true, nil
+}
+func CheckVirHorzControl(board [8][8]Piece, square Position) (bool, error) {
+	file := square.File
+	rank := square.Rank
+	color := board[file][rank].Color
+	up := file + 1
+	down := file - 1
+	right := file - 1
+	left := file + 1
+	for {
+		if up > 7 && down <= 0 && right > 7 && left <= 0 {
+			return true, nil
+		}
+		if up < 8 {
+			if board[up][rank].Type != Empty {
+				if board[up][rank].Color != color && board[up][rank].Type == Rook || board[up][rank].Type == Queen {
+					return false, nil
+				}
+				up = 8
+			}
+			up++
+		}
+		if down >= 0 {
+			if board[down][rank].Type != Empty {
+				if board[down][rank].Color != color && board[down][rank].Type == Rook || board[down][rank].Type == Queen {
+					return false, nil
+				}
+				down = -1
+			}
+			down--
+		}
+		if right < 8 {
+			if board[file][right].Type != Empty {
+				if board[file][right].Color != color && board[file][right].Type == Rook || board[file][right].Type == Queen {
+					return false, nil
+				}
+				right = 8
+			}
+			right++
+		}
+		if left >= 0 {
+			if board[file][left].Type != Empty {
+				if board[file][left].Color != color && board[file][left].Type == Rook || board[file][left].Type == Queen {
+					return false, nil
+				}
+				left = -1
+			}
+			left--
+		}
+	}
 }
