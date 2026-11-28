@@ -121,4 +121,11 @@ func ValidatePawnMove(fen, secondFEN *Fen) (bool, error) {
 		return false, nil
 	}
 	return true, nil
-}
+} /*
+func ValidateKingMove(fen, secondFEN *Fen) (bool, error) {
+	move, err := h.LocateMove(fen, secondFEN)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}*/

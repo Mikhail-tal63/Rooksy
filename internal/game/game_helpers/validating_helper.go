@@ -698,8 +698,8 @@ func CheckVirHorzControl(board [8][8]Piece, square Position) (bool, error) {
 	color := board[file][rank].Color
 	up := file + 1
 	down := file - 1
-	right := file - 1
-	left := file + 1
+	right := rank + 1
+	left := rank - 1
 	for {
 		if up > 7 && down <= 0 && right > 7 && left <= 0 {
 			return true, nil
@@ -741,4 +741,60 @@ func CheckVirHorzControl(board [8][8]Piece, square Position) (bool, error) {
 			left--
 		}
 	}
+}
+func CheckDiagnalControl(board [8][8]Piece, square Position) (bool, error) {
+	file := square.File
+	rank := square.Rank
+	color := board[file][rank].Color
+	up := file + 1
+	down := file - 1
+	right := rank + 1
+	left := rank - 1
+	for up < 8 && right < 8 {
+		if board[up][right].Type != Empty {
+			if board[up][right].Color != color && board[up][right].Type == Bishop || board[up][right].Type == Queen {
+				return false, nil
+			}
+			break
+		}
+		up++
+		right++
+	}
+	up = file + 1
+	left = rank - 1
+	for up < 8 && left > 0 {
+		if board[up][left].Type != Empty {
+			if board[up][left].Color != color && board[up][left].Type == Bishop || board[up][left].Type == Queen {
+				return false, nil
+			}
+			break
+		}
+		up++
+		left--
+	}
+	down = file - 1
+	right = rank + 1
+	for down > 0 && right < 8 {
+		if board[down][right].Type != Empty {
+			if board[down][right].Color != color && board[down][right].Type == Bishop || board[down][right].Type == Queen {
+				return false, nil
+			}
+			break
+		}
+		down--
+		right++
+	}
+	down = file - 1
+	left = rank - 1
+	for down > 0 && right > 0 {
+		if board[down][right].Type != Empty {
+			if board[down][right].Color != color && board[down][right].Type == Bishop || board[down][right].Type == Queen {
+				return false, nil
+			}
+			break
+		}
+		down--
+		left--
+	}
+	return true, nil
 }
