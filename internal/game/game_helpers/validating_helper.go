@@ -667,3 +667,28 @@ func P3_CheckLowerLeftDiagnal(board [8][8]Piece, from Position, color Colors, ki
 	}
 	return true, nil
 }
+
+// validate king squire
+func CheckKnightControll(board [8][8]Piece, square Position) (bool, error) {
+	file := square.File
+	rank := square.Rank
+	switch {
+	case file+2 < 8 && rank+1 < 8 && board[file+2][rank+1].Type == Knight:
+		return false, nil
+	case file+2 < 8 && rank-1 > 0 && board[file+2][rank-1].Type == Knight:
+		return false, nil
+	case file+1 < 8 && rank-2 > 0 && board[file+1][rank-2].Type == Knight:
+		return false, nil
+	case file-1 > 0 && rank-2 > 0 && board[file-1][rank-2].Type == Knight:
+		return false, nil
+	case file-2 > 0 && rank-1 > 0 && board[file-2][rank-1].Type == Knight:
+		return false, nil
+	case file-2 > 0 && rank+1 < 8 && board[file-2][rank+1].Type == Knight:
+		return false, nil
+	case file-1 > 0 && rank+2 < 8 && board[file-1][rank+2].Type == Knight:
+		return false, nil
+	case file+1 < 8 && rank+2 < 8 && board[file+1][rank+2].Type == Knight:
+		return false, nil
+	}
+	return true, nil
+}
