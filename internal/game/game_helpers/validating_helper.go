@@ -190,6 +190,70 @@ func ValidateLShapedMoves(move Move, fen Fen) (bool, error) {
 	}
 
 }
+func ValidateLegalPawnMoves(move Move, fen Fen) (bool, error) {
+	if move.To.File > 7 || move.To.Rank < 0 {
+		return false, nil
+	}
+	if move.From.File > 7 || move.From.Rank < 0 {
+		return false, nil
+	}
+
+	enpassant, err := ParseEnPassant(fen.EnPassant)
+	if err != nil {
+		return false, err
+	}
+	color := fen.Board[move.From.File][move.From.Rank].Color
+	board := fen.Board
+	from := move.From
+	file := move.To.File
+	rank := move.To.Rank
+
+	if enpassant != nil && *enpassant == move.To {
+		return true, nil
+	}
+	if rank == from.Rank {
+		if color == White {
+			switch {
+			case file == from.File+1 && board[file][rank].Type == Empty:
+				return true, nil
+			case file == from.File+2 && board[file][rank].Type == Empty && rank == 1:
+				return true, nil
+			default:
+				return false, nil
+			}
+		} else {
+			switch {
+			case file == from.File-1 && board[file][rank].Type == Empty:
+				return true, nil
+			case file == from.File-2 && board[file][rank].Type == Empty && rank == 6:
+				return true, nil
+			default:
+				return false, nil
+			}
+		}
+	} else {
+		if color == White {
+			switch {
+			case rank == from.Rank+1 && file == from.File+1 && board[file][rank].Type != Empty:
+				return true, nil
+			case rank == from.Rank-1 && file == from.File+1 && board[file][rank].Type != Empty:
+				return true, nil
+			default:
+				return false, nil
+			}
+		} else {
+			switch {
+			case rank == from.Rank+1 && file == from.File-1 && board[file][rank].Type != Empty:
+				return true, nil
+			case rank == from.Rank-1 && file == from.File-1 && board[file][rank].Type != Empty:
+				return true, nil
+			default:
+				return false, nil
+			}
+		}
+	}
+
+}
 
 // checking pined piece
 func CheckPinedPeice(fen *Fen, move Move) (bool, error) {
