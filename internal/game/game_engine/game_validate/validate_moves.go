@@ -100,3 +100,25 @@ func ValidateRookMove(fen, secondFEN *Fen) (bool, error) {
 	}
 	return true, nil
 }
+func ValidatePawnMove(fen, secondFEN *Fen) (bool, error) {
+	move, err := h.LocateMove(fen, secondFEN)
+	if err != nil {
+		return false, err
+	}
+	pin, err := h.CheckPinedPeice(fen, *move)
+	if err != nil {
+		return false, nil
+	}
+	if !pin {
+		return false, nil
+	}
+
+	legal, err := h.ValidateLegalPawnMoves(*move, *fen)
+	if err != nil {
+		return false, err
+	}
+	if !legal {
+		return false, nil
+	}
+	return true, nil
+}
